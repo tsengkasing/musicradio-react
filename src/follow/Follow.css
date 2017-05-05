@@ -1,0 +1,19 @@
+.follow-outside-border {
+    opacity: 0.9;
+    background-color: white;
+    margin: 32px auto;
+    width: 1000px;
+    padding: 0 12px;
+    box-shadow: 0 0 1px 0 #9e9e9e;
+
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.follow-sub-header {
+    margin: 32px 0 16px 8px;
+    border-bottom: 2px solid #00f2fe;
+    font-size: 20px;
+    color: #666;
+    line-height: 28px;
+}

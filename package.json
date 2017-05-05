@@ -1,0 +1,26 @@
+{
+  "name": "MusicRadio_PC",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "react-scripts": "0.9.5"
+  },
+  "dependencies": {
+    "danmaku": "^1.2.0",
+    "jquery": "^3.2.1",
+    "jquery-form": "^4.2.1",
+    "material-ui": "^0.18.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "react-tap-event-plugin": "^2.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "proxy": "http://60.205.217.210:8080/MusicBubble/"
+}
