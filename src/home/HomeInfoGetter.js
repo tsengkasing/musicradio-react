@@ -43,9 +43,6 @@ class HomeInfoGetter {
                     id : song_id,
                 },
                 success : function(data, textStatus, jqXHR) {
-                    let avator_url = data.avator_url;
-                    if(avator_url) data.avator_url = avator_url.replace(/.*\\resources\\images\\/, "http://radioimg.neverstar.top/");
-                    if(avator_url) data.avator_url = avator_url.replace(/.*\/resources\/images\//, "http://radioimg.neverstar.top/");
                     song_info = data;
 
                     if(song_info.netease_id !== 0) {

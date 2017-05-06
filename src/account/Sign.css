@@ -9,7 +9,6 @@
 }
 
 .background {
-    background: url(http://localhost:3000/sign.jpg) no-repeat left;
     background-size: cover;
     /*padding: 32px;*/
     height: 100%;

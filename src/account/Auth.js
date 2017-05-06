@@ -16,7 +16,7 @@ class Auth {
                     return userinfo;
                 }
             }catch (e) {
-                console.error('user information parse error');
+                console.error('userpage information parse error');
             }
         }
         //用户信息不存在或者解析错误

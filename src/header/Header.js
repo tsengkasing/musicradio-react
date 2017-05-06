@@ -12,24 +12,6 @@ import Auth from '../account/Auth';
 
 class Header extends React.Component {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            name: null,
-            toLogin: true
-        }
-    }
-
-    componentWillMount() {
-        let userinfo = Auth.getUserInfo();
-        if(typeof userinfo === 'object') {
-            this.setState({
-                name: userinfo.username,
-                toLogin: userinfo.toLogin
-            })
-        }
-    }
-
     signOut = () => {
         const URL = API.SignOut;
         $.ajax({
@@ -42,12 +24,12 @@ class Header extends React.Component {
             },
             success : function() {
                 Auth.clearUserInfo();
+                window.location.reload();
             },
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });
-        window.location.reload();
     };
 
     render() {
@@ -59,10 +41,10 @@ class Header extends React.Component {
                 </div>
                 <div className="menu">
                     <div className="menu-item"><Link className="link" to="/page/billboard">热门</Link></div>
-                    {this.state.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/songlist">歌单管理</Link></div>}
-                    {this.state.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/follow">关注</Link></div>}
-                    <div className="menu-item">{this.state.name ? <Link className="link" to="/page/u/home">{this.state.name}</Link> : <Link className="link" to="/page/sign">登录/注册</Link>}</div>
-                    {this.state.toLogin ? null : <div className="menu-item" onClick={this.signOut}>注销</div>}
+                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/songlist">歌单管理</Link></div>}
+                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/follow">关注</Link></div>}
+                    <div className="menu-item">{this.props.info.name ? <Link className="link" to="/page/u/home">{this.props.info.name}</Link> : <Link className="link" to="/page/sign">登录/注册</Link>}</div>
+                    {this.props.info.toLogin ? null : <div className="menu-item" onClick={this.signOut}>注销</div>}
                 </div>
             </div>
         );

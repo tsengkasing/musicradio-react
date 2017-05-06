@@ -44,6 +44,7 @@
 }
 
 .billboard-item-star-label {
+    cursor: default;
     border: 0;
     box-sizing: border-box;
     display: inline-block;
@@ -61,6 +62,7 @@
 }
 
 .billboard-item-star {
+    cursor: default;
     color: #00bcd4;
     border: 0;
     box-sizing: border-box;

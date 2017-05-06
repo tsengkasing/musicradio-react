@@ -17,6 +17,7 @@ class AudioPlayer extends React.Component {
 
     constructor(props) {
         super(props);
+        window._ws = null;
         this.state = {
             song_id: this.props.match.params.id,
             //音频信息
@@ -41,6 +42,8 @@ class AudioPlayer extends React.Component {
 
             //检测播放时间的定时器
             timer : 0,
+
+            ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${1}`
         }
     }
 
@@ -76,6 +79,18 @@ class AudioPlayer extends React.Component {
             });
             return;
         }
+
+        //发送给Server
+        if (window._ws) {
+            console.log('Sent: ' + text);
+            window._ws.send(text);
+        } else {
+            alert('connection not established, please connect.');
+        }
+    };
+
+    createDanmaku = (text) => {
+
         // 初始化 API 中的 comments 选项即为下述 comment 对象的数组。
         let comment = {
             text: text,
@@ -162,8 +177,30 @@ class AudioPlayer extends React.Component {
         cb(info);
     };
 
+    createWebSocket = () => {
+        if ('WebSocket' in window) {
+            window._ws = new WebSocket(this.state.ws_url); //ws://localhost:8080/myHandler
+        }// } else if ('MozWebSocket' in window) {
+        //     this.ws = new MozWebSocket(this.state.ws_url);
+        // } else {
+        //     this.ws = new SockJS(this.state.ws_url);
+        // }
+
+        window._ws.onopen = () => {
+            console.log('Info: connection opened.');
+        };
+        window._ws.onmessage = (event) => {
+            console.log('Received: ' + event.data);
+            this.createDanmaku(event.data);
+        };
+        window._ws.onclose = (event) => {
+            console.log('Info: connection closed.');
+            console.log(JSON.stringify(event));
+        };
+    };
 
     componentDidMount() {
+        this.createWebSocket();
         this.setupDanmaku();
         this.setState({
             audio_visualizer: new AudioVisualizer('audio-player', 'canvas')

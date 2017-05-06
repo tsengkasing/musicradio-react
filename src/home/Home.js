@@ -4,6 +4,9 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LinearProgress from 'material-ui/LinearProgress';
+import IconButton from 'material-ui/IconButton';
+import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
+
 import HomeInfoGetter from './HomeInfoGetter';
 import './Home.css';
 
@@ -23,12 +26,11 @@ class Home extends React.Component {
                 friends_num: 0,
                 liked_songlist: 0,
                 ctr_songlist: 0,
-
-                redirect: null
             },
             recommend_song_list: [],
             recommend_user_list: [],
-            moments: []
+            moments: [],
+            redirect: null
         }
     }
 
@@ -54,12 +56,18 @@ class Home extends React.Component {
         })
     }
 
-    handleRedirect = (target) => {
+    handleRedirect = (type, target) => {
         let path;
-        if(target === 0)
-            path = '/page/u/songlist';
-        else
-            path = '/page/u/follow';
+        switch(type) {
+            case 0:
+                path = '/page/u/songlist';break;
+            case 1:
+                path = '/page/u/follow';break;
+            case 2:
+                path = `/page/user/${target}`;break;
+            case 3:
+                path = `/page/audio/${target}`;break;
+        }
         this.setState({
             redirect: path
         });
@@ -110,7 +118,7 @@ class Home extends React.Component {
                         </div>
                         <div className="home-private-recommend" style={{margin: '0 8px'}}>
                             {this.state.recommend_user_list.map((user, index)=>(
-                                <div className="recommend-user-item" key={index}>
+                                <div className="recommend-user-item" key={index} onTouchTap={() => this.handleRedirect(2, user.id)}>
                                     <img className="home-info-avatar" src={user.avator_url} alt="头像" />
                                     <div className="recommend-user-item-info">
                                         <div>{user.username}</div><br/>
@@ -135,10 +143,15 @@ class Home extends React.Component {
                         <span>推荐歌曲</span>
                     </div>
                     <div className="home-private-recommend" style={{margin: '0 8px'}}>
-                        {this.state.recommend_song_list.map((song, index)=>(
+                        {this.state.recommend_song_list.map((item, index)=>(
                             <div key={index} className="list-item-seperated">
-                                <div><span>{index + 1}. </span>{song.song_name}</div>
-                                <div>{song.song_artists}</div>
+                                <div className="recommend-list-item-layout">
+                                    <IconButton className="recommend-list-item-button-play" tooltip="Play" touch={true} tooltipPosition="top-left" onTouchTap={() => this.handleRedirect(3, item.song_id)} style={{padding: 0, height: 'auto'}}>
+                                        <AvPlayCircleOutline/>
+                                    </IconButton>
+                                    <span><span>{index + 1}. </span>{item.song_name}</span>
+                                </div>
+                                <div>{item.song_artists}</div>
                             </div>
                         ))}
                     </div>
@@ -150,12 +163,11 @@ class Home extends React.Component {
                     <div className="home-public">
                         {this.state.moments.map((moment, index) => (
                             <div className="comment" key={index}>
-                                <img className="comment-avator" alt="missing" src={moment.avator_url}/>
+                                <img className="comment-avator" alt="missing" src={moment.avator_url} onTouchTap={() => this.handleRedirect(2, moment.id)}/>
                                 <div className="comment-content">
                                     <div className="comment-border" />
                                     <div className="comment-header">
-                                        <div className="comment-header-name">{moment.username}</div>&nbsp;
-                                        <div className="comment-header-level">lv {moment.level}</div>
+                                        <div className="comment-header-name" onTouchTap={() => this.handleRedirect(2, moment.id)}>{moment.username}</div>&nbsp;
                                     </div>
                                     <div className="comment-text">
                                         <span style={{color: 'rgb(0,188,212)'}}>{moment.type}</span>&nbsp;{moment.songlist_name}

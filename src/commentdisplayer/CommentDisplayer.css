@@ -71,6 +71,7 @@
 }
 
 .comment-avator {
+    cursor: pointer;
     border-radius: 50%;
     width: 64px;
     height: 64px;
@@ -98,9 +99,9 @@
 }
 
 .comment-header-name {
+    cursor: pointer;
     order: 0;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 14px;
     color : #6d757a;
 }
 

@@ -2,6 +2,7 @@
  * Created by tsengkasing on 5/1/2017.
  */
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import $ from 'jquery';
 import API from '../API';
 import TextField from 'material-ui/TextField';
@@ -26,7 +27,7 @@ class SignIn extends React.Component {
             error_username : null,
             error_password : null,
 
-            redirect: false
+            redirect: null
         }
     }
 
@@ -60,7 +61,6 @@ class SignIn extends React.Component {
             contentType: 'application/json;charset=UTF-8',
             data : JSON.stringify(request_data),
             success : function(data, textStatus, jqXHR) {
-                console.log(data);
                 if(data.result){
                     this.refs.dialog.setContent('Sign in Success!', 'Press OK to redirect to Home.');
                     this.refs.dialog.handleOpen(true);
@@ -69,6 +69,9 @@ class SignIn extends React.Component {
                 }
             }.bind(this),
             error : function(xhr, textStatus) {
+                if(textStatus === 500) {
+                    alert('Internal Server Error\n Please wait a minute.');
+                }
                 this.setState({error_password: 'password not matched'});
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }.bind(this)
@@ -120,10 +123,10 @@ class SignIn extends React.Component {
     };
 
     redirectPage = () => {
-        // this.setState({
-        //     redirect: true
-        // });
-        window.location.pathname = '/page/u/home';
+        this.props.success();
+        this.setState({
+            redirect: '/page/u/home'
+        });
     };
 
     render () {
@@ -158,8 +161,8 @@ class SignIn extends React.Component {
                               onClick={this.props.switch}/>
 
                 <SignDialog ref="dialog" onPress={this.redirectPage}/>
+                {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
             </div>
-
         );
     }
 }

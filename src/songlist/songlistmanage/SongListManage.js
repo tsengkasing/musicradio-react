@@ -13,8 +13,8 @@ import {
 } from 'material-ui/Table';
 import { Redirect } from 'react-router-dom';
 import FlatButton from 'material-ui/FlatButton';
-import IconButton from 'material-ui/IconButton';
 import LinearProgress from 'material-ui/LinearProgress';
+import IconButton from 'material-ui/IconButton';
 import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 import SongListInfoGetter from '../SongListInfoGetter';

@@ -1,0 +1,16 @@
+.user-page-songlist-item {
+    width: 920px;
+    height: 512px;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-flow: column nowrap;
+    flex-flow: column nowrap;
+}
+
+.user-page-songlist-item-image {
+    width: 920px;
+    height: 370px;
+}

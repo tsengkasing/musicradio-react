@@ -6,6 +6,8 @@ import './Sign.css';
 import SignIn from './SignIn';
 import Register from './Register';
 
+import bg from './sign.jpg';
+
 class Sign extends React.Component {
 
     constructor(props) {
@@ -26,9 +28,9 @@ class Sign extends React.Component {
     render () {
         return (
             <div className="main">
-                <div className="background">
+                <div className="background" style={{ background: `url(${bg}) no-repeat left`}}>
                     <div className="frame">
-                        {this.state.page_status ? <SignIn switch={this.switchPage} />: <Register switch={this.switchPage} />}
+                        {this.state.page_status ? <SignIn success={this.props.success} switch={this.switchPage} />: <Register switch={this.switchPage} />}
                     </div>
                 </div>
 

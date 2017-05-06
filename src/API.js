@@ -9,6 +9,8 @@ class API {
 
     static title = 'Music Radio';
 
+    static DanmakuWebSocket = 'ws://happyfarmer-oray.vicp.io';
+
     //账户
     static SignIn = URL + '/signin';//success
     static SignUp = URL + '/signup';//success
@@ -53,15 +55,13 @@ class API {
 
     //音乐
     static SongInfo = URL + '/api/song';//success
-    static SearchhSong = URL + '/api/search';//success
+    static SearchhSong = URL + '/search';//success
 
-    static SongToPlay = URL + '/api/play';
+    static SongToPlay = URL + '/play';
 
     static LocalSongInfo = URL + '/song';//success
 
     static ImageInfo = URL + '/img';//success
-
-
 }
 
 export default API;

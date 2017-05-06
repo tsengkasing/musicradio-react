@@ -39,6 +39,7 @@
 }
 
 .home-info-avatar {
+    cursor: pointer;
     width: 188px;
     height: 188px;
 }
@@ -77,9 +78,6 @@
     justify-content: space-between;
 }
 
-.level-bar-progress {
-}
-
 .home-private-info-count:nth-child(1) {
     padding: 0 32px 0 0;
 }
@@ -99,6 +97,17 @@
 
 .home-private-info-count-number {
     font-size: 24px;
+}
+
+.recommend-list-item-layout {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.recommend-list-item-button-play {
+    height: auto;
+    padding: 0;
 }
 
 .list-item-seperated {
