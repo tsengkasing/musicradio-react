@@ -112,12 +112,14 @@ export default class CommentDisplayer extends Component {
                         placeholder="请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。"
                         rows={3}
                         cols={80}
+                        disabled={this.props.toLogin}
                     />
                     <RaisedButton className="button"
                                   buttonStyle={{height : '90px'}}
                                   onTouchTap={()=>{this.sendComment(this.state.input_comment.value);}}
                                   label="发表评论"
-                                  primary={true} />
+                                  primary={true}
+                                  disabled={this.props.toLogin} />
                 </div>
 
                 <div className="comment-list">

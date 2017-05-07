@@ -3,6 +3,7 @@
  */
 import $ from 'jquery';
 import API from '../API';
+import Auth from '../account/Auth';
 
 class HomeInfoGetter {
     static getNeteaseSonginfo(song_id) {
@@ -21,6 +22,9 @@ class HomeInfoGetter {
                     resolve(data);
                 },
                 error : function(xhr, textStatus) {
+                    if(xhr.status === 400) {
+                        resolve({});
+                    }
                     console.log(xhr.status + '\n' + textStatus + '\n');
                 }
             });
@@ -174,6 +178,9 @@ class HomeInfoGetter {
                 'target' : 'api',
             },
             success : function(data, textStatus, jqXHR) {
+                let info = Auth.getUserInfo();
+                Object.assign(info, data);
+                Auth.storeUserInfo(info);
                 cb(data);
             },
             error : function(xhr, textStatus) {

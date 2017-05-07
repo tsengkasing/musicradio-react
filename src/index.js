@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Redirect} from 'react-router-dom';
+import { BrowserRouter, Route, Redirect, Switch} from 'react-router-dom';
 import injectTapEventPlugin from 'react-tap-event-plugin';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import Header from './header/Header';
@@ -26,11 +26,15 @@ const PrivateRoute = ({ component: Component, ...rest }) => (
             <Component {...props}/>
         ) : (
             <Redirect to={{
-                pathname: '/page/sign',
+                pathname: '/sign',
                 state: { from: props.location }
             }}/>
         )
     )}/>
+);
+
+const NotFound = () => (
+    <div className="not-found">你来到了没有音乐的荒野之地</div>
 );
 
 class App extends React.Component {
@@ -68,20 +72,21 @@ class App extends React.Component {
                     <Header info={{name: this.state.name, toLogin: this.state.toLogin}} />
                     <MuiThemeProvider>
                         <div className="content">
-                            <switch>
-                                <Route path="/page/sign" render={props => (
+                            <Switch>
+                                <Route path="/sign" render={props => (
                                     <Sign {...props} success={this.handleRefreshStatus} />
                                 )}/>
-                                <Route path="/page/billboard" component={Billboard}/>
-                                <Route path="/page/songlist/:id" component={SongListManage}/>
-                                <Route path="/page/audio/:id" component={AudioPlayer}/>
-                                <Route path="/page/user/:id" component={UserPage}/>
+                                <Route path="/billboard" component={Billboard}/>
+                                <Route path="/songlist/:id" component={SongListManage}/>
+                                <Route path="/audio/:id" component={AudioPlayer}/>
+                                <Route path="/user/:id" component={UserPage}/>
                                 <PrivateRoute exact path="/" component={Home}/>
-                                <PrivateRoute path="/page/u/home" component={Home}/>
-                                <PrivateRoute path="/page/u/follow" component={Follow}/>
-                                <PrivateRoute path="/page/u/songlist/:id" component={SongListManage}/>
-                                <PrivateRoute exact path="/page/u/songlist" component={SongList}/>
-                            </switch>
+                                <PrivateRoute path="/u/home" component={Home}/>
+                                <PrivateRoute path="/u/follow" component={Follow}/>
+                                <PrivateRoute path="/u/songlist/:id" component={SongListManage}/>
+                                <PrivateRoute exact path="/u/songlist" component={SongList}/>
+                                <Route component={NotFound}/>
+                            </Switch>
                         </div>
                     </MuiThemeProvider>
                     <Footer/>

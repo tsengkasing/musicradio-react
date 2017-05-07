@@ -9,6 +9,7 @@ import ActionGrade from 'material-ui/svg-icons/action/grade';
 import $ from 'jquery';
 import API from '../API';
 
+import Auth from '../account/Auth';
 import './Billboard.css';
 
 
@@ -23,7 +24,10 @@ class Billboard extends React.Component {
     }
 
     handleStar = (index, songlist_id) => {
-        console.log('like!');
+        if(!Auth.getLoginStatus()) {
+            alert('请先登录!');
+            return;
+        }
         const URL = API.LikeSongList;
         let data = {songlist_id : songlist_id};
         $.ajax({
@@ -80,7 +84,7 @@ class Billboard extends React.Component {
 
     handleRedirect = (songlist_id) => {
         this.setState({
-            redirect: `/page/u/songlist/${songlist_id}`
+            redirect: `/songlist/${songlist_id}`
         });
     };
 

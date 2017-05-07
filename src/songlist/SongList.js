@@ -54,7 +54,7 @@ class SongList extends React.Component {
 
     handleRedirect = (songlist_id) => {
         this.setState({
-            redirect: `/page/u/songlist/${songlist_id}`
+            redirect: `/u/songlist/${songlist_id}`
         });
     };
 

@@ -40,11 +40,11 @@ class Header extends React.Component {
                     <p>Music Radio</p>
                 </div>
                 <div className="menu">
-                    <div className="menu-item"><Link className="link" to="/page/billboard">热门</Link></div>
-                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/songlist">歌单管理</Link></div>}
-                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/page/u/follow">关注</Link></div>}
-                    <div className="menu-item">{this.props.info.name ? <Link className="link" to="/page/u/home">{this.props.info.name}</Link> : <Link className="link" to="/page/sign">登录/注册</Link>}</div>
-                    {this.props.info.toLogin ? null : <div className="menu-item" onClick={this.signOut}>注销</div>}
+                    <div className="menu-item"><Link className="link" to="/billboard">热门</Link></div>
+                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/u/songlist">歌单管理</Link></div>}
+                    {this.props.info.toLogin ? null : <div className="menu-item"><Link className="link" to="/u/follow">关注</Link></div>}
+                    <div className="menu-item">{this.props.info.name ? <Link className="link" to="/u/home">{this.props.info.name}</Link> : <Link className="link" to="/sign">登录/注册</Link>}</div>
+                    {this.props.info.toLogin ? null : <div style={{cursor: 'pointer'}} className="menu-item" onClick={this.signOut}>注销</div>}
                 </div>
             </div>
         );

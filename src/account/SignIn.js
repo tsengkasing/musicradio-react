@@ -69,10 +69,11 @@ class SignIn extends React.Component {
                 }
             }.bind(this),
             error : function(xhr, textStatus) {
-                if(textStatus === 500) {
-                    alert('Internal Server Error\n Please wait a minute.');
+                if(xhr.status === 500) {
+                    alert('Internal Server Error\nPlease wait a minute.');
+                }else {
+                    this.setState({error_password: 'password not matched'});
                 }
-                this.setState({error_password: 'password not matched'});
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }.bind(this)
         });
@@ -102,6 +103,9 @@ class SignIn extends React.Component {
                         this.setState({error_username: 'Username not existed'});
                 }.bind(this),
                 error : function(xhr, textStatus) {
+                    if(xhr.status === 500) {
+                        alert('Internal Server Error\nPlease wait a minute.');
+                    }
                     console.log(xhr.status + '\n' + textStatus + '\n');
                 }
             });
@@ -125,7 +129,7 @@ class SignIn extends React.Component {
     redirectPage = () => {
         this.props.success();
         this.setState({
-            redirect: '/page/u/home'
+            redirect: '/u/home'
         });
     };
 

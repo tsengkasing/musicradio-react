@@ -28,7 +28,7 @@ class SongListManage extends React.Component {
         this.state = {
             song_list_id: this.props.match.params.id,
             songs: [],
-            is_owner: this.props.match.url.startsWith('/page/u'),
+            is_owner: this.props.match.url.startsWith('/u'),
             wait: false,
             redirect: null
         };
@@ -54,7 +54,7 @@ class SongListManage extends React.Component {
 
     handleRedirect = (song_id) => {
         this.setState({
-            redirect: `/page/audio/${song_id}`
+            redirect: `/audio/${song_id}`
         });
     };
 

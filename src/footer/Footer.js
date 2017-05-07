@@ -12,7 +12,7 @@ class Footer extends React.Component {
             <footer>
                 <div className="footer">
                     <p>© 2017 Music Radio</p>
-                    <p>加入我们</p>
+                    <p><a className="contact" href="mailto:i@tsengkasing.me">联系我们</a></p>
                 </div>
             </footer>
         );

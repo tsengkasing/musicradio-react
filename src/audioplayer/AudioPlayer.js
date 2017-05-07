@@ -11,6 +11,7 @@ import AudioVisualizer from './AudioVisualizer';
 
 import $ from 'jquery';
 import API from '../API';
+import Auth from '../account/Auth';
 import './AudioPlayer.css';
 
 class AudioPlayer extends React.Component {
@@ -18,6 +19,14 @@ class AudioPlayer extends React.Component {
     constructor(props) {
         super(props);
         window._ws = null;
+
+        let info = Auth.getUserInfo();
+        let toLogin = true, user_id = -1;
+        if(info && typeof info === 'object' && !info.toLogin) {
+            toLogin = false;
+            user_id = info.id;
+        }
+
         this.state = {
             song_id: this.props.match.params.id,
             //音频信息
@@ -43,7 +52,8 @@ class AudioPlayer extends React.Component {
             //检测播放时间的定时器
             timer : 0,
 
-            ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${1}`
+            toLogin: toLogin,
+            ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${user_id}`
         }
     }
 
@@ -262,19 +272,20 @@ class AudioPlayer extends React.Component {
                         <div className="create-danmaku">
                             <TextField
                                 className="text-field"
-                                hintText="发送弹幕~(๑•̀ㅁ•́๑)✧"
+                                hintText={this.state.toLogin ? "登录之后才能发送弹幕喔~" : "发送弹幕~(๑•̀ㅁ•́๑)✧"}
                                 errorText={this.state.input_error}
                                 fullWidth={true}
                                 value={this.state.input_value}
                                 onChange={this.handleInputChange}
+                                disabled={this.state.toLogin}
                             />
                             <RaisedButton className="button"
                                           onTouchTap={()=>{this.sendDanmaku(this.state.input_value);}}
-                                          label="发送" primary={true} />
+                                          label="发送" primary={true} disabled={this.state.toLogin} />
                         </div>
                     </div>
 
-                    <CommentDisplayer/>
+                    <CommentDisplayer toLogin={this.state.toLogin} />
 
 
                 </div>

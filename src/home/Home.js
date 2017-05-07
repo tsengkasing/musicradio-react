@@ -60,13 +60,13 @@ class Home extends React.Component {
         let path;
         switch(type) {
             case 0:
-                path = '/page/u/songlist';break;
+                path = '/u/songlist';break;
             case 1:
-                path = '/page/u/follow';break;
+                path = '/u/follow';break;
             case 2:
-                path = `/page/user/${target}`;break;
+                path = `/user/${target}`;break;
             case 3:
-                path = `/page/audio/${target}`;break;
+                path = `/audio/${target}`;break;
         }
         this.setState({
             redirect: path

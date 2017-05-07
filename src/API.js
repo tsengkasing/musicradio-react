@@ -2,7 +2,7 @@
  * Created by tsengkasing on 5/1/2017.
  */
 
-let URL = '';
+let URL = '/api';
 
 //后端API
 class API {
@@ -54,7 +54,7 @@ class API {
     static RecommendSong = URL + '/recommendSong';//success
 
     //音乐
-    static SongInfo = URL + '/api/song';//success
+    static SongInfo = URL + '/song';//success
     static SearchhSong = URL + '/search';//success
 
     static SongToPlay = URL + '/play';

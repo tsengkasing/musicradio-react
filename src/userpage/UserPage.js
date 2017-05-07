@@ -5,11 +5,13 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import LinearProgress from 'material-ui/LinearProgress';
 import Paper from 'material-ui/Paper';
+import RaisedButton from 'material-ui/RaisedButton';
 import IconButton from 'material-ui/IconButton';
 import ActionGrade from 'material-ui/svg-icons/action/grade';
 
 import $ from 'jquery';
 import API from '../API';
+import Auth from '../account/Auth';
 
 import UserPageInfoGetter from './UserPageInfoGetter';
 import './UserPage.css';
@@ -30,13 +32,15 @@ class UserPage extends React.Component {
                 friends_num: 0,
                 liked_songlist: 0,
                 ctr_songlist: 0,
+                followed: false,
 
                 redirect: null
             },
             albums: [],
             moments: [],
-            redirect: null
-        }
+            redirect: Auth.getUserInfo().id.toString() === this.props.match.params.id ?
+                '/u/home' : null
+        };
     }
 
     componentWillMount() {
@@ -59,8 +63,39 @@ class UserPage extends React.Component {
         });
     }
 
+    follow = () => {
+        //如果未登录，跳转到登录页面
+        if(!Auth.getLoginStatus()) {
+            alert('请先登录!');
+            return;
+        }
+
+        const URL = API.Follow;
+        const data = {user_id : this.props.match.params.id};
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            contentType: 'application/json;charset=UTF-8',
+            dataType: 'json',
+            headers : {
+                'target' : 'api',
+            },
+            data : JSON.stringify(data),
+            success : function(data, textStatus, jqXHR) {
+                console.log(data);
+            },
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+    };
+
     handleStar = (index, songlist_id) => {
-        console.log('like!');
+        if(!Auth.getLoginStatus()) {
+            alert('请先登录!');
+            return;
+        }
+
         const URL = API.LikeSongList;
         let data = {songlist_id : songlist_id};
         $.ajax({
@@ -90,7 +125,7 @@ class UserPage extends React.Component {
 
     handleRedirect = (songlist_id) => {
         this.setState({
-            redirect: `/page/u/songlist/${songlist_id}`
+            redirect: `/songlist/${songlist_id}`
         });
     };
 
@@ -104,7 +139,12 @@ class UserPage extends React.Component {
                             <div className="home-private-info-text">
                                 <div>
                                     <div className="home-private-info-name">{this.state.user_info.username}</div>
-                                    <div className="home-private-info-gender">{this.state.user_info.gender === 'M' ? 'Male' : 'Female'}</div>
+                                    <div className="home-private-info-gender">
+                                        {this.state.user_info.gender === 'M' ? 'Male' : 'Female'}
+                                    </div>
+                                    <RaisedButton label={this.state.user_info.followed ? "已关注" : "关注"}
+                                                  disabled={this.state.user_info.followed} onTouchTap={this.follow}
+                                                  primary={true} style={{margin: '0 32px'}}/>
                                 </div>
                                 <div className="level-bar">
                                     <div className="level-bar-text">
@@ -112,7 +152,8 @@ class UserPage extends React.Component {
                                         <div>Lv{this.state.user_info.level + 1}</div>
                                     </div>
                                     <div>
-                                        <LinearProgress mode="determinate" value={this.state.user_info.exp} max={this.state.user_info.exp_max} />
+                                        <LinearProgress mode="determinate" value={this.state.user_info.exp}
+                                                        max={this.state.user_info.exp_max} />
                                     </div>
                                 </div>
                                 <div className="home-private-info-count-border">
@@ -141,14 +182,17 @@ class UserPage extends React.Component {
                         {this.state.albums.map((item, index) => (
                             <Paper key={index} zDepth={2} className="billboard-item-border">
                                 <div className="user-page-songlist-item">
-                                    <div className="user-page-songlist-item-image" style={{background: `url(${item.img_url}) no-repeat center`, backgroundSize: 'cover'}} onTouchTap={() => this.handleRedirect(item.list_id)} />
+                                    <div className="user-page-songlist-item-image"
+                                         style={{background: `url(${item.img_url}) no-repeat center`, backgroundSize: 'cover'}}
+                                         onTouchTap={() => this.handleRedirect(item.list_id)} />
                                     <div>
                                         <div className="billboard-item-title">
                                             <div onTouchTap={() => this.handleRedirect(item.list_id)}>{item.songlist_name}</div>
                                             <div style={{display: 'flex', flexFlow: 'row nowrap'}}>
                                                 {item.liked ?
                                                     <div className="billboard-item-star-label"><div>Likes</div></div> :
-                                                    <IconButton onTouchTap={() =>{this.handleStar(index, item.list_id)}} tooltip="喜爱" touch={true} tooltipPosition="top-right">
+                                                    <IconButton onTouchTap={() =>{this.handleStar(index, item.list_id)}}
+                                                                tooltip="喜爱" touch={true} tooltipPosition="top-right">
                                                         <ActionGrade />
                                                     </IconButton>
                                                 }

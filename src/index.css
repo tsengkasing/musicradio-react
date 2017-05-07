@@ -29,3 +29,9 @@ body {
   height: calc(100% - 70px - 70px);
   overflow-y: auto;
 }
+
+.not-found {
+  text-align: center;
+  margin: 40px 0;
+  font-size: 2rem;
+}

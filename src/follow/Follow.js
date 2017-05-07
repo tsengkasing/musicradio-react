@@ -2,6 +2,7 @@
  * Created by Think on 2017/5/4.
  */
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import {List, ListItem} from 'material-ui/List';
 import Avatar from 'material-ui/Avatar';
 import ActionInfo from 'material-ui/svg-icons/action/info';
@@ -14,7 +15,8 @@ class Follow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            following_list: []
+            following_list: [],
+            redirect: null
         };
     }
 
@@ -39,8 +41,10 @@ class Follow extends React.Component {
         });
     };
 
-    visitUser = (item) => {
-        console.log(item.id);
+    visitUser = (user_id) => {
+        this.setState({
+            redirect: `/user/${user_id}`
+        });
     };
 
     componentWillMount() {
@@ -56,7 +60,7 @@ class Follow extends React.Component {
                 <List>
                     {this.state.following_list.map((item, index) => (
                         <ListItem key={index}
-                                  onTouchTap={()=>this.visitUser(item)}
+                                  onTouchTap={()=>this.visitUser(item.id)}
                             primaryText={item.username}
                             leftAvatar={<Avatar src={item.avator_url} />}
                             rightIcon={<ActionInfo />}
@@ -64,6 +68,7 @@ class Follow extends React.Component {
                     ))}
 
                 </List>
+                {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
             </div>
         );
     }
