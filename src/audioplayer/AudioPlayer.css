@@ -1,16 +1,20 @@
 .audio {
     font-family: "Microsoft YaHei UI";
-    background-color: #f6f9fa;
+    /*background-color: #f6f9fa;*/
+    /*width: 1024px;*/
+    /*margin: 0 auto;*/
 }
 
 /*头部图片*/
 .audio-header {
+    /*position: fixed;*/
+    z-index: 1000;
+    top: 0;
     display: block;
     height: 170px;
     width: 100%;
     background: url(http://img.everstar.xyz/1.jpg) no-repeat center;
     background-size: cover;
-    /*margin-bottom: 20px;*/
 }
 
 /*音频展示*/
@@ -24,12 +28,14 @@
 .title-card {
     width: 100%;
     background-color: white;
-    box-shadow:0 1px 1px 0px #9e9e9e;
+    box-shadow:0 1px 1px 0 #9e9e9e;
 }
 
 /*标题*/
 .audio-title {
+    /*margin: 0 0 0 32px;*/
     margin: 0 auto;
+    /*width: 952px;*/
     width: 1024px;
     display: flex;
     flex-wrap: nowrap;
@@ -39,6 +45,9 @@
 
 /*音频标题*/
 .audio-title-left {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
     order: 0;
     flex: 1 0 66.6%;
 }
@@ -60,11 +69,11 @@
     width: 64px;
     height:64px;
     border-radius: 50%;
-    margin: 16px 32px 32px 32px;
+    margin: 32px;
 }
 
 .producer-info {
-    margin: 16px 0 0 0;
+    margin: 32px 0 0 0;
     font-size: 14px;
     display: flex;
     flex-flow: column wrap;
@@ -138,6 +147,12 @@
     flex: 1 1 10%;
 }
 
+.mock {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: white;
+}
 
 /*Logo*/
 /*.logo {*/

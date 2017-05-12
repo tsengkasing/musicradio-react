@@ -5,69 +5,58 @@ import React, { Component } from 'react';
 import RaisedButton from 'material-ui/RaisedButton';
 import './CommentDisplayer.css';
 
-const comments = [
-    {
-        name : '小星星',
-        img_url : 'http://img.everstar.xyz/everstar.jpg',
-        id : '00001',
-        level : '3',
-        content : '希望自己能更加努力。',
-        time : '2017-03-21 22:34',
-        order : 5
-    },
-    {
-        name : 'Rabbit Lee',
-        img_url : 'http://img.everstar.xyz/rabbit.jpg',
-        id : '00002',
-        level : '3',
-        content : '很强',
-        time : '2017-03-22 12:56',
-        order : 4
-    },
-    {
-        name : 'happyFarmer',
-        img_url : 'http://img.everstar.xyz/happyfarmergo.jpg',
-        id : '00003',
-        level : '2',
-        content : '超厉害',
-        time : '2017-03-23 13:44',
-        order : 3
-    },
-    {
-        name : 'Novemser',
-        img_url : 'http://img.everstar.xyz/novemser.jpg',
-        id : '00004',
-        level : '4',
-        content : '0评论1点赞惨案',
-        time : '2017-03-23 09:04',
-        order : 2
-    },
-    {
-        name : 'Huo Long',
-        img_url : 'http://img.everstar.xyz/huolong.jpg',
-        id : '00005',
-        level : '3',
-        content : '。。。。。',
-        time : '2017-03-23 18:06',
-        order : 1
-    }
-];
+
+import Auth from '../account/Auth';
+import API from '../API';
+import $ from 'jquery';
 
 export default class CommentDisplayer extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            user_img_avator : 'http://img.everstar.xyz/default.jpg',
+            user_img_avator : Auth.getUserInfo().avator_url,
             //评论列表
             comment_list : [],
-            input_comment : null,
-            order : 6
+            input_comment : '',
+
+            song_list_id: parseInt(this.props.match.params.song_list_id)
         };
     }
 
+    loadComments = (cb) => {
+        const URL = API.GetComments;
+        $.ajax({
+            url : URL,
+            type : 'GET',
+            headers : {
+                'target' : 'api',
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data : {
+                id : this.state.song_list_id,
+            },
+            success : function(comments) {
+                this.setState({
+                    comment_list: comments
+                });
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+    };
 
-    sendComment = (text) => {
+    handleInputComment = (event) => {
+        this.setState({
+            input_comment: event.target.value
+        });
+    };
+
+
+    sendComment = () => {
+        let text = this.state.input_comment;
         if(!text || text === '') {
             alert('评论不能为空喔~');
             return;
@@ -77,28 +66,38 @@ export default class CommentDisplayer extends Component {
                 return;
             }
         }
+
         let comment = {
-            name : '刘看山',
-            img_url : 'http://img.everstar.xyz/default.jpg',
-            id : '00008',
-            level : '1',
+            songlist_id: this.state.song_list_id,
             content : text,
-            time : new Date().toLocaleString(),
-            order : this.state.order++
         };
-        let comments = [comment].concat(this.state.comment_list);
-        this.setState({
-            comment_list : comments
+        const URL = API.AddComment;
+        $.ajax({
+            url : URL,
+            type : 'POST',
+            headers : {
+                'target' : 'api',
+            },
+            contentType: 'application/json',
+            dataType: 'json',
+            data : JSON.stringify(comment),
+            success : function(data) {
+                this.loadComments();
+                // eslint-disable-next-line
+                this.setState({
+                    input_comment: ''
+                });
+            }.bind(this),
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
         });
-        // eslint-disable-next-line
-        this.state.input_comment.value = '';
+
+
     };
 
     componentWillMount() {
-        this.setState({
-            input_comment : document.getElementById('input_comment'),
-            comment_list: comments
-        });
+        this.loadComments();
     }
 
     render() {
@@ -109,6 +108,8 @@ export default class CommentDisplayer extends Component {
                     <textarea
                         id="input_comment"
                         className="text-field"
+                        value={this.state.input_comment}
+                        onInput={this.handleInputComment}
                         placeholder="请自觉遵守互联网相关的政策法规，严禁发布色情、暴力、反动的言论。"
                         rows={3}
                         cols={80}
@@ -116,7 +117,7 @@ export default class CommentDisplayer extends Component {
                     />
                     <RaisedButton className="button"
                                   buttonStyle={{height : '90px'}}
-                                  onTouchTap={()=>{this.sendComment(this.state.input_comment.value);}}
+                                  onTouchTap={()=>{this.sendComment();}}
                                   label="发表评论"
                                   primary={true}
                                   disabled={this.props.toLogin} />
@@ -125,7 +126,7 @@ export default class CommentDisplayer extends Component {
                 <div className="comment-list">
                     {this.state.comment_list.map((row, index)=>(
                         <div className="comment" key={index}>
-                            <img className="comment-avator" alt="missing" src={row.img_url}/>
+                            <img className="comment-avator" alt="missing" src={row.avator_url}/>
                             <div className="comment-content">
                                 <div className="comment-border" />
                                 <div className="comment-header">
@@ -136,7 +137,7 @@ export default class CommentDisplayer extends Component {
                                     {row.content}
                                 </div>
                                 <div className="comment-footer">
-                                    #{row.order} &nbsp;&nbsp; {row.time}
+                                    #{this.state.comment_list.length - index} &nbsp;&nbsp; {row.time}
                                 </div>
                             </div>
                         </div>

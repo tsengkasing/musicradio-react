@@ -5,6 +5,7 @@ import React from 'react';
 import $ from 'jquery';
 import API from '../API';
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import SignDialog from "./SignDialog";
@@ -25,20 +26,21 @@ class Register extends React.Component {
 
     constructor(props) {
         super(props);
+        let _current_date = new Date();
         this.state = {
             username : null,
             password : null,
+            email: null,
+            birth_date: _current_date,
 
             error_username : null,
             error_password : null,
+            error_email: null,
 
             sex : 'M',
+            max_date: _current_date
         }
     }
-
-    selectSex = (event) => {
-        this.setState({sex : event.target.value});
-    };
 
 
     // 注册
@@ -46,14 +48,16 @@ class Register extends React.Component {
 
         if(this.state.error_username !== null) return;
         if(this.state.error_password !== null) return;
+        if(this.state.error_email !== null) return;
 
         const URL = API.SignUp;
         let data = {
+            email: this.state.email,
             username : this.state.username,
             password : this.state.password,
-            gender : this.state.sex
+            gender : this.state.sex,
+            birthday: this.state.birth_date.toLocaleDateString()
         };
-        console.log(data);
         $.ajax({
             url : URL,
             type : 'POST',
@@ -66,8 +70,7 @@ class Register extends React.Component {
             success : function(data, textStatus, jqXHR) {
                 if(data.result) {
                     this.refs.dialog.setContent('Sign Up success!', 'You can sign in now.');
-                    this.refs.dialog.handleOpen(false);
-                    this.handleChange(0);
+                    this.refs.dialog.handleOpen(true);
                 }
             }.bind(this),
             error : function(xhr, textStatus) {
@@ -106,22 +109,46 @@ class Register extends React.Component {
         }
     };
 
+    checkEmailValidation = (event) => {
+        if(!(/^[a-zA-Z0-9_\.]+@[a-zA-Z0-9-]+[\.a-zA-Z]+$/.test(event.target.value)))
+            this.setState({
+                error_email: 'Email is invalid'
+            })
+    };
+
+    inputEmail = (event) => {
+        this.setState({
+            email: event.target.value,
+            error_email: null
+        });
+    };
+
     inputUsername = (event) => {
         this.setState({
-            username : event.target.value,
-            error_username : null
+            username: event.target.value,
+            error_username: null
         });
     };
 
     inputPassword = (event) => {
         this.setState({
-            password : event.target.value,
-            error_password : null
+            password: event.target.value,
+            error_password: null
         });
     };
 
-    redirectPage = () => {
+    handleChangeDate = (event, date) => {
+        this.setState({
+            birth_date: date
+        })
+    };
 
+    selectSex = (event) => {
+        this.setState({sex : event.target.value});
+    };
+
+    redirectPage = () => {
+        this.props.switch();
     };
 
     render () {
@@ -131,10 +158,17 @@ class Register extends React.Component {
                     <h3 className="">Music Radio</h3>
                     <p className="">给世人 展示 你的音乐</p>
 
+                    <TextField hintText="email"
+                               floatingLabelText="email"
+                               type="email"
+                               onBlur={this.checkEmailValidation}
+                               errorText={this.state.error_email}
+                               onChange={this.inputEmail}/>
+                    <br/>
+
                     <TextField hintText="username"
                                floatingLabelText="username"
                                type="text"
-                               id="signup"
                                errorText={this.state.error_username}
                                onBlur={this.checkUsernameNotExist}
                                onChange={this.inputUsername}/>
@@ -144,7 +178,14 @@ class Register extends React.Component {
                                type="password"
                                errorText={this.state.error_password}
                                onChange={this.inputPassword}/>
-                    <br/><br/>
+                    <br/>
+                    <DatePicker
+                        onChange={this.handleChangeDate}
+                        autoOk={true}
+                        floatingLabelText="BirthDay"
+                        defaultDate={this.state.max_date}
+                        maxDate={this.state.max_date}
+                    /><br/>
                     <RadioButtonGroup name="sex" valueSelected={this.state.sex} onChange={this.selectSex} style={style.radioButtonGroup}>
                         <RadioButton
                             value="M"

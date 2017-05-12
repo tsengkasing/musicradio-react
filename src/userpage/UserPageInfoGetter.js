@@ -8,6 +8,13 @@ class UserPageInfoGetter {
 
     //获取用户信息
     static getUserInfo(user_id, cb) {
+        if(!user_id) {
+            cb({
+                avator_url: 'http://img.everstar.xyz/default.jpg',
+                username: '找不到此人'
+            });
+            return;
+        }
         const URL = API.Info;
         $.ajax({
             url : URL,
@@ -24,6 +31,7 @@ class UserPageInfoGetter {
                 cb(data);
             },
             error : function(xhr, textStatus) {
+                cb({});
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });

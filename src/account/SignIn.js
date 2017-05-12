@@ -70,7 +70,8 @@ class SignIn extends React.Component {
             }.bind(this),
             error : function(xhr, textStatus) {
                 if(xhr.status === 500) {
-                    alert('Internal Server Error\nPlease wait a minute.');
+                    this.refs.dialog.setContent('Internal Server Error', 'Please wait a minute.');
+                    this.refs.dialog.handleOpen(false);
                 }else {
                     this.setState({error_password: 'password not matched'});
                 }
@@ -104,7 +105,8 @@ class SignIn extends React.Component {
                 }.bind(this),
                 error : function(xhr, textStatus) {
                     if(xhr.status === 500) {
-                        alert('Internal Server Error\nPlease wait a minute.');
+                        this.refs.dialog.setContent('Internal Server Error', 'Please wait a minute.');
+                        this.refs.dialog.handleOpen(false);
                     }
                     console.log(xhr.status + '\n' + textStatus + '\n');
                 }

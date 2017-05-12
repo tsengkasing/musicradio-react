@@ -11,7 +11,7 @@ div {
 .header {
     z-index: 999;
     flex: 1;
-    height: 70px;
+    min-height: 70px;
     /*background-image: linear-gradient(to right, #4facfe 0%, #00f2fe 100%);*/
     background-color: rgb(52, 52, 52);
 

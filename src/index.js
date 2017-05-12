@@ -52,17 +52,10 @@ class App extends React.Component {
 
     handleRefreshStatus = () => {
         let userinfo = Auth.getUserInfo();
-        if(typeof userinfo === 'object') {
-            this.setState({
-                name: userinfo.username,
-                toLogin: userinfo.toLogin
-            })
-        }else {
-            this.setState({
-                name: null,
-                toLogin: true
-            });
-        }
+        this.setState({
+            name: typeof userinfo === 'object' ? userinfo.username : null,
+            toLogin: typeof userinfo === 'object' ? userinfo.toLogin : true
+        });
     };
 
     render() {
@@ -78,12 +71,12 @@ class App extends React.Component {
                                 )}/>
                                 <Route path="/billboard" component={Billboard}/>
                                 <Route path="/songlist/:id" component={SongListManage}/>
-                                <Route path="/audio/:id" component={AudioPlayer}/>
+                                <Route exact path="/audio/:id" component={AudioPlayer}/>
+                                <Route exact path="/audio/:song_list_id/:id" component={AudioPlayer}/>
                                 <Route path="/user/:id" component={UserPage}/>
                                 <PrivateRoute exact path="/" component={Home}/>
                                 <PrivateRoute path="/u/home" component={Home}/>
                                 <PrivateRoute path="/u/follow" component={Follow}/>
-                                <PrivateRoute path="/u/songlist/:id" component={SongListManage}/>
                                 <PrivateRoute exact path="/u/songlist" component={SongList}/>
                                 <Route component={NotFound}/>
                             </Switch>

@@ -81,9 +81,13 @@ class UserPage extends React.Component {
                 'target' : 'api',
             },
             data : JSON.stringify(data),
-            success : function(data, textStatus, jqXHR) {
-                console.log(data);
-            },
+            success : function() {
+                let info = this.state.user_info;
+                info.followed = true;
+                this.setState({
+                    user_info: info
+                });
+            }.bind(this),
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }

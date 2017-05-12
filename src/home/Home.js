@@ -7,6 +7,7 @@ import LinearProgress from 'material-ui/LinearProgress';
 import IconButton from 'material-ui/IconButton';
 import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
+import AvatarUpload from './avatarupload/AvatarUpload';
 import HomeInfoGetter from './HomeInfoGetter';
 import './Home.css';
 
@@ -34,11 +35,15 @@ class Home extends React.Component {
         }
     }
 
-    componentWillMount() {
+    loadUserInfo = () => {
         HomeInfoGetter.getUserInfo((user_info) => {
             if(this.refs.home)
                 this.setState({user_info: user_info});
         });
+    };
+
+    componentWillMount() {
+        this.loadUserInfo();
 
         HomeInfoGetter.getRecommendSongs((detail_list) => {
             if(this.refs.home)
@@ -53,14 +58,16 @@ class Home extends React.Component {
         HomeInfoGetter.getMoments((moments) => {
             if(this.refs.home)
                 this.setState({moments : moments});
-        })
+        });
+
+
     }
 
     handleRedirect = (type, target) => {
         let path;
         switch(type) {
             case 0:
-                path = '/u/songlist';break;
+                path = '/songlist';break;
             case 1:
                 path = '/u/follow';break;
             case 2:
@@ -79,7 +86,8 @@ class Home extends React.Component {
                 <div className="home-private">
                     <div className="home-private-info">
                         <div className="home-private-info-general">
-                            <img className="home-info-avatar" src={this.state.user_info.avator_url} alt="头像"/>
+                            <img className="home-info-avatar" src={this.state.user_info.avator_url} alt="头像"
+                                 onClick={()=>this.refs.avatarUploadDialog.handleOpen()}/>
                             <div className="home-private-info-text">
                                 <div>
                                 <div className="home-private-info-name">{this.state.user_info.username}</div>
@@ -149,9 +157,9 @@ class Home extends React.Component {
                                     <IconButton className="recommend-list-item-button-play" tooltip="Play" touch={true} tooltipPosition="top-left" onTouchTap={() => this.handleRedirect(3, item.song_id)} style={{padding: 0, height: 'auto'}}>
                                         <AvPlayCircleOutline/>
                                     </IconButton>
-                                    <span><span>{index + 1}. </span>{item.song_name}</span>
+                                    <span><span>{index + 1}. </span>{item.audio_title}</span>
                                 </div>
-                                <div>{item.song_artists}</div>
+                                <div>{item.artists}</div>
                             </div>
                         ))}
                     </div>
@@ -163,11 +171,11 @@ class Home extends React.Component {
                     <div className="home-public">
                         {this.state.moments.map((moment, index) => (
                             <div className="comment" key={index}>
-                                <img className="comment-avator" alt="missing" src={moment.avator_url} onTouchTap={() => this.handleRedirect(2, moment.id)}/>
+                                <img className="comment-avator" alt="missing" src={moment.avator_url} onClick={() => this.handleRedirect(2, moment.id)}/>
                                 <div className="comment-content">
                                     <div className="comment-border" />
                                     <div className="comment-header">
-                                        <div className="comment-header-name" onTouchTap={() => this.handleRedirect(2, moment.id)}>{moment.username}</div>&nbsp;
+                                        <div className="comment-header-name" onClick={() => this.handleRedirect(2, moment.id)}>{moment.username}</div>&nbsp;
                                     </div>
                                     <div className="comment-text">
                                         <span style={{color: 'rgb(0,188,212)'}}>{moment.type}</span>&nbsp;{moment.songlist_name}
@@ -181,6 +189,7 @@ class Home extends React.Component {
                     </div>
                 </div>
                 {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
+                <AvatarUpload ref="avatarUploadDialog" success={this.loadUserInfo} />
             </div>
         );
     }

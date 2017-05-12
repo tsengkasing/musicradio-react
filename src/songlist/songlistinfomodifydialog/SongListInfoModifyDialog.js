@@ -4,15 +4,15 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import Toggle from 'material-ui/Toggle';
+import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import CircularProgress from 'material-ui/CircularProgress';
 
 import API from '../../API';
 import './SongListInfoModifyDialog.css';
 
-// import 'jquery-form';
-// import $ from 'jquery';
+import 'jquery-form';
+import $ from 'jquery';
 
 class SongListInfoModifyDialog extends React.Component {
 
@@ -60,34 +60,21 @@ class SongListInfoModifyDialog extends React.Component {
             wait: true
         });
 
-        // const form = $('#ModifySongListInfoSubmit').ajaxSubmit({
-        //     beforeSubmit: (arr, $form, options) => {
-        //         console.log(arr);
-        //     },
-        //     filtering: function(el, index) {
-        //         if ( el.type !== 'file' || el.value !== '' ) {
-        //             return el;
-        //         }else {
-        //             let _el = el;
-        //             _el.value = null;
-        //             return _el;
-        //         }
-        //     }
-        // });
-        // const xhr = form.data('jqxhr');
-        //
-        // xhr.done((data) => {
-        //     if(data && data.result)
-        //         console.log('create list \nname :' + this.state.song_list_name + '\ndescription : ' + this.state.description );
-        //     this.handleClose();
-        //     this.props.success();
-        // });
+        const form = $('#ModifySongListInfoSubmit').ajaxSubmit();
+        const xhr = form.data('jqxhr');
 
-        this.refs.submit.click();
-        setTimeout(()=>{
-            this.props.success();
+        xhr.done((data) => {
+            if(data && data.result)
+                console.log('create list \nname :' + this.state.song_list_name + '\ndescription : ' + this.state.description );
             this.handleClose();
-        }, 3000);
+            this.props.success();
+        });
+
+        // this.refs.submit.click();
+        // setTimeout(()=>{
+        //     this.props.success();
+        //     this.handleClose();
+        // }, 3000);
     };
 
     inputName = (event) => {
@@ -135,12 +122,6 @@ class SongListInfoModifyDialog extends React.Component {
                         <CircularProgress />
                     </div>
 
-                    <Toggle
-                        label="外链URL地址/上传本地图片"
-                        defaultToggled={false}
-                        style={{marginTop: 8}}
-                        onToggle={this.handleToggle}
-                    />
                     <form id="ModifySongListInfoSubmit" name="changelist" action={API.ChangeList} method="post" encType="multipart/form-data" target="uploadFrame">
                         <TextField
                             type="text"
@@ -165,18 +146,9 @@ class SongListInfoModifyDialog extends React.Component {
 
                         <input type="number" defaultValue={this.state.song_list_id} className="hidden" name="songlist_id" />
                         <input type="number" defaultValue={this.state.img_id} name="image_id" className="hidden" />
-                        <TextField
-                            style={{display : this.state.imageImportWay ? 'none' : 'block'}}
-                            name="image_url"
-                            type="text"
-                            hintText="image_url"
-                            floatingLabelText="image_url"
-                            value={this.state.image_url}
-                            onChange={this.inputImageUrl}
-                        />
-                        <FlatButton label="Choose an Image" labelPosition="before" style={{display : this.state.imageImportWay ? 'block' : 'none'}}>
-                            <input type="file" name="image_file" className="image" />
-                        </FlatButton>
+                        <RaisedButton primary={true} label="选择一张图片" labelPosition="before">
+                            <input type="file" name="image_file" className="image-input" />
+                        </RaisedButton>
                         <input type="submit" ref="submit" className="hidden"/>
                     </form>
                 </Dialog>

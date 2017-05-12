@@ -54,7 +54,7 @@ class SongList extends React.Component {
 
     handleRedirect = (songlist_id) => {
         this.setState({
-            redirect: `/u/songlist/${songlist_id}`
+            redirect: `/songlist/${songlist_id}`
         });
     };
 
@@ -73,7 +73,7 @@ class SongList extends React.Component {
                         <Paper key={index} zDepth={2} className="song-list-item-border">
                             <div className="song-list-item">
                                 <div className="song-list-item-image" style={{background: `url(${item.img_url}) no-repeat center`}}
-                                     onTouchTap={() => {this.handleRedirect(item.list_id)}} />
+                                     onClick={() => {this.handleRedirect(item.list_id)}} />
                                 <div className="song-list-item-title">
                                     <div>{item.songlist_name}</div>
                                     <div style={{display: 'flex', flexFlow: 'row nowrap'}}>

@@ -19,20 +19,35 @@ import AvPlayCircleOutline from 'material-ui/svg-icons/av/play-circle-outline';
 
 import SongListInfoGetter from '../SongListInfoGetter';
 import SongUpload from './songupload/SongUpload';
+import SignDialog from "../../account/SignDialog";
+import Auth from '../../account/Auth';
 import './SongListManage.css';
 
 class SongListManage extends React.Component {
 
     constructor(props) {
         super(props);
+        window.__songselected = 'none';
+
         this.state = {
             song_list_id: this.props.match.params.id,
+            song_list_info : {},
             songs: [],
-            is_owner: this.props.match.url.startsWith('/u'),
+            is_owner: this.recognizeIsOwner(),
             wait: false,
             redirect: null
         };
     }
+
+    //判断是否是自己创建的歌单
+    recognizeIsOwner = () => {
+        let info = Auth.getUserInfo(), list = null;
+        if(info) {
+            list = info.own_song_list_ids;
+        }
+        console.log(list);
+        return list && list.includes(parseInt(this.props.match.params.id));
+    };
 
     loadSongs = () => {
         this.setState({wait: true});
@@ -45,12 +60,45 @@ class SongListManage extends React.Component {
     };
 
     componentWillMount() {
+        SongListInfoGetter.getSongListInfo(this.state.song_list_id, (info) => {
+            this.setState({
+                song_list_info: info
+            });
+            console.log(info);
+        });
+
         this.loadSongs();
     }
 
     formatDuration(duration) {
         return (duration / 60000).toFixed(0) + '分' + ((duration / 1000) % 60).toFixed(0) + '秒';
     }
+
+    handleSelectSongs = (selectedRows) => {
+        window.__songselected = selectedRows;
+        console.log(selectedRows);
+    };
+
+    handleRemoveSong = () => {
+        let selected = window.__songselected;
+        if((typeof selected) === 'string' && selected === 'all') {
+            this.refs.dialog.setContent('不可以不可以不可以', '不能删除全部歌曲喔');
+            this.refs.dialog.handleOpen(false);
+        }else if(((typeof selected) === 'string' && selected === 'none') ||
+            (selected instanceof Array && selected.length === 0)) {
+            this.refs.dialog.setContent('不可以不可以不可以', '没有选中任何歌曲');
+            this.refs.dialog.handleOpen(false);
+        }else {
+            let tasks = [];
+            for(let index of window.__songselected) {
+                tasks.push(SongListInfoGetter.removeSong(parseInt(this.state.song_list_id), this.state.songs[index].song_id));
+            }
+            Promise.all(tasks).then(() => {
+                this.refs.dialog.setContent('操作成功', '选中的歌曲都删掉啦');
+                this.refs.dialog.handleOpen(true);
+            });
+        }
+    };
 
     handleRedirect = (song_id) => {
         this.setState({
@@ -60,12 +108,26 @@ class SongListManage extends React.Component {
 
     render() {
         return (
-            <div className="outside-border">
-                <div className="sub-header">
+            <div className="song-list-manage-outside-border">
+                <div className="song-list-manage-item">
+                    <div className="song-list-item-image"
+                         style={{background: `url(${this.state.song_list_info.img_url}) no-repeat center`}}/>
+                    <div className="song-list-item-title">
+                        <div style={{margin: '10px 0'}}>
+                            {this.state.song_list_info.songlist_name}
+                            <span className="song-list-manage-item-author"> —— by {this.state.song_list_info.author}</span>
+                        </div>
+                        <div style={{display: 'flex', flexFlow: 'row nowrap'}}>
+                            <div className="song-list-item-star-label"><div>Likes</div></div>
+                            <div className="song-list-item-star"><div>{this.state.song_list_info.likes}</div></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="song-list-manage-sub-header">
                     <span>歌曲列表</span>
                 </div>
                 <div>
-                    <Table multiSelectable={true}>
+                    <Table multiSelectable={true} onRowSelection={this.handleSelectSongs}>
                         <TableHeader displaySelectAll={this.state.is_owner} adjustForCheckbox={this.state.is_owner}>
                             <TableRow>
                                 <TableHeaderColumn style={{width: '50%'}}>歌曲名称</TableHeaderColumn>
@@ -91,8 +153,8 @@ class SongListManage extends React.Component {
                         <TableFooter adjustForCheckbox={false}>
                             <TableRow>
                                 <TableRowColumn style={{paddingLeft: 12, verticalAlign: 'middle'}}>
-                                    {this.state.is_owner ? <FlatButton label="删除选中歌曲" primary={true} /> : null }
-                                    {this.state.is_owner ? <FlatButton label="上传歌曲" onTouchTap={() => this.refs.uploadSong.handleOpen()} primary={true} /> : null }
+                                    {this.state.is_owner ? <FlatButton label="删除选中歌曲" primary={true} onTouchTap={this.handleRemoveSong}/> : null }
+                                    {this.state.is_owner ? <FlatButton label="上传歌曲" onTouchTap={() => this.refs.uploadSong.handleOpen(this.state.song_list_id)} primary={true} /> : null }
                                 </TableRowColumn>
                             </TableRow>
                         </TableFooter>
@@ -101,6 +163,7 @@ class SongListManage extends React.Component {
                 </div>
                 {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
                 <SongUpload ref="uploadSong" success={this.loadSongs}/>
+                <SignDialog ref="dialog" onPress={this.loadSongs}/>
             </div>
         );
     }

@@ -9,7 +9,7 @@ class API {
 
     static title = 'Music Radio';
 
-    static DanmakuWebSocket = 'ws://happyfarmer-oray.vicp.io';
+    static DanmakuWebSocket = 'ws://60.205.217.210:8080/MusicBubble/';
 
     //账户
     static SignIn = URL + '/signin';//success
@@ -17,6 +17,8 @@ class API {
     static SignOut = URL + '/signout';
     static Account = URL + '/account';//success
     static Avatar = URL + '/update';
+
+    static OwnSongList = URL + '/songlistown';
 
     //喜爱/点赞
     static LikeSongList = URL + '/likesonglist';//success
@@ -38,6 +40,8 @@ class API {
     static AddSongFromNetEase = URL + '/addsong/netease';//网易云success
     static AddSongFromLike = URL + '/addsong/songlist';//deprecated
     static AddSongFromUpload = URL + '/addsong/upload';//success
+
+    static GetSongListInfo = URL + '/songlistinfo';
 
     //社交
     static Info = URL + '/info';//自己success 他人success
@@ -62,6 +66,8 @@ class API {
     static LocalSongInfo = URL + '/song';//success
 
     static ImageInfo = URL + '/img';//success
+
+    static GetHistoryDanMu = URL + '/danmu';
 }
 
 export default API;

@@ -13,6 +13,7 @@ import Dialog from 'material-ui/Dialog';
 
 import API from '../../../API';
 import $ from 'jquery';
+import 'jquery-form';
 
 import './SongUpload.css';
 
@@ -83,11 +84,16 @@ class SongUpload extends React.Component {
         if(this.checkValidation()) return;
         // $('#uploadLocalSong').click();
 
+        const form = $('#Uploadsong').ajaxSubmit();
+        const xhr = form.data('jqxhr');
 
-        //console.log('song_id : ' + $("[name='uploadFrame']").html());
-        this.setState({open: false});
-        console.log('add update');
-        window.setTimeout(this.props.success, 3000);
+        xhr.done((data) => {
+            if(data && data.result)
+                console.log('create list \nname :' + this.state.song_list_name + '\ndescription : ' + this.state.description );
+            this.handleClose();
+            this.props.success();
+        });
+
     };
 
     GetSongDetail = () => {
@@ -122,21 +128,21 @@ class SongUpload extends React.Component {
             error_song_name = '必须选择上传文件';
             flag = true;
         }
-        if(this.state.song_name === '') {
-            error_song_name = '名称不能为空';
-            flag = true;
-        }
-        if(this.state.song_artists === '') {
-            error_song_artists = '艺术家不能为空';
-            flag = true;
-        }
+        // if(this.state.song_name === '') {
+        //     error_song_name = '名称不能为空';
+        //     flag = true;
+        // }
+        // if(this.state.song_artists === '') {
+        //     error_song_artists = '艺术家不能为空';
+        //     flag = true;
+        // }
         if(this.state.language === '') {
             error_language = '语言不能为空';
             flag = true;
         }
         this.setState({
-            error_text_name: error_song_name,
-            error_text_artists: error_song_artists,
+            // error_text_name: error_song_name,
+            // error_text_artists: error_song_artists,
             error_text_language: error_language
         });
         return flag;
@@ -219,20 +225,20 @@ class SongUpload extends React.Component {
                                 </Chip>
                             </div>
                             <div className="upload-song-info">
-                                <TextField
-                                    floatingLabelText="歌曲名称"
-                                    value={this.state.song_name}
-                                    onChange={this.handleInputSongName}
-                                    errorText={this.state.error_text_name}
-                                    fullWidth={true}
-                                /><br />
+                                {/*<TextField*/}
+                                    {/*floatingLabelText="歌曲名称"*/}
+                                    {/*value={this.state.song_name}*/}
+                                    {/*onChange={this.handleInputSongName}*/}
+                                    {/*errorText={this.state.error_text_name}*/}
+                                    {/*fullWidth={true}*/}
+                                {/*/><br />*/}
                                 <div className="upload-song-info-second">
-                                    <TextField
-                                        floatingLabelText="歌曲艺术家"
-                                        value={this.state.song_artists}
-                                        onChange={this.handleInputSongArtists}
-                                        errorText={this.state.error_text_artists}
-                                    />
+                                    {/*<TextField*/}
+                                        {/*floatingLabelText="歌曲艺术家"*/}
+                                        {/*value={this.state.song_artists}*/}
+                                        {/*onChange={this.handleInputSongArtists}*/}
+                                        {/*errorText={this.state.error_text_artists}*/}
+                                    {/*/>*/}
                                     <SelectField
                                         name="language"
                                         value={this.state.language}

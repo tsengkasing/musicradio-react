@@ -6,35 +6,9 @@ import API from '../API';
 import Auth from '../account/Auth';
 
 class HomeInfoGetter {
-    static getNeteaseSonginfo(song_id) {
+    static getSongInfo(song_id) {
         return new Promise((resolve) => {
-            const URL = API.SongInfo;
-            $.ajax({
-                url : URL,
-                type : 'GET',
-                headers : {
-                    target : 'api'
-                },
-                data : {
-                    id : song_id,
-                },
-                success : function(data) {
-                    resolve(data);
-                },
-                error : function(xhr, textStatus) {
-                    if(xhr.status === 400) {
-                        resolve({});
-                    }
-                    console.log(xhr.status + '\n' + textStatus + '\n');
-                }
-            });
-        });
-    };
-
-    static getLocalSongInfo(song_id) {
-        return new Promise((resolve) => {
-            let song_info = {};
-            const URL = API.LocalSongInfo;
+            const URL = API.SongToPlay;
             $.ajax({
                 url : URL,
                 type : 'GET',
@@ -46,19 +20,8 @@ class HomeInfoGetter {
                 data : {
                     id : song_id,
                 },
-                success : function(data, textStatus, jqXHR) {
-                    song_info = data;
-
-                    if(song_info.netease_id !== 0) {
-                        HomeInfoGetter.getNeteaseSonginfo(song_info.netease_id).then((song_info) => {
-                            song_info.song_id = song_id;
-                            resolve(song_info);
-                        });
-                    }else{
-                        song_info.song_artists = song_info.artists;
-                        song_info.song_id = song_id;
-                        resolve(song_info);
-                    }
+                success : function(data) {
+                    resolve(data);
                 },
                 error : function(xhr, textStatus) {
                     console.log(xhr.status + '\n' + textStatus + '\n');
@@ -83,7 +46,7 @@ class HomeInfoGetter {
             success : function(data) {
                 let promise_detail_list = [];
                 for(let i = 0; i < data.length; i++) {
-                    promise_detail_list.push(HomeInfoGetter.getLocalSongInfo(data[i]));
+                    promise_detail_list.push(HomeInfoGetter.getSongInfo(data[i]));
                 }
                 Promise.all(promise_detail_list).then((detail_list) => {
                     cb(detail_list);
@@ -181,6 +144,7 @@ class HomeInfoGetter {
                 let info = Auth.getUserInfo();
                 Object.assign(info, data);
                 Auth.storeUserInfo(info);
+                HomeInfoGetter.storeUserOwnSongListId();
                 cb(data);
             },
             error : function(xhr, textStatus) {
@@ -188,6 +152,28 @@ class HomeInfoGetter {
             }
         });
     };
+
+    static storeUserOwnSongListId() {
+        const URL = API.OwnSongList;
+        $.ajax({
+            url : URL,
+            type : 'GET',
+            contentType: 'application/json',
+            headers : {
+                'target' : 'api',
+            },
+            success : function(data, textStatus, jqXHR) {
+                let info = Auth.getUserInfo();
+                Object.assign(info, {
+                    own_song_list_ids: data
+                });
+                Auth.storeUserInfo(info);
+            },
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
+    }
 }
 
 export default HomeInfoGetter;

@@ -12,6 +12,7 @@ import AudioVisualizer from './AudioVisualizer';
 import $ from 'jquery';
 import API from '../API';
 import Auth from '../account/Auth';
+import UserPageInfoGetter from '../userpage/UserPageInfoGetter';
 import './AudioPlayer.css';
 
 class AudioPlayer extends React.Component {
@@ -19,6 +20,8 @@ class AudioPlayer extends React.Component {
     constructor(props) {
         super(props);
         window._ws = null;
+        //弹幕库实例
+        window._danmaku = null;
 
         let info = Auth.getUserInfo();
         let toLogin = true, user_id = -1;
@@ -44,9 +47,6 @@ class AudioPlayer extends React.Component {
             input_value : '',
             input_error : null,
 
-            //弹幕库实例
-            danmaku : null,
-
             audio_visualizer : null,
 
             //检测播放时间的定时器
@@ -54,7 +54,9 @@ class AudioPlayer extends React.Component {
 
             toLogin: toLogin,
             ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${user_id}`
-        }
+        };
+
+        console.log(this.props.match.params.song_list_id);
     }
 
     onPlayingProgress = () => {
@@ -66,20 +68,16 @@ class AudioPlayer extends React.Component {
         });
     };
 
-    setupDanmaku = () => {
+    setupDanmaku = (comments) => {
         let danmaku = new Danmaku();
         danmaku.init({
             container: document.getElementById('graph-container'),
-            audio: document.getElementById('audio_player'),
-            comments: [],
+            audio: document.getElementById('audio-player'),
+            comments: comments,
             // engine: 'canvas',
             // speed : 144
         });
-        this.setState({danmaku : danmaku});
-
-        // setInterval(()=>this.sendDanmaku('233'), 1000);
-        // setInterval(()=>this.sendDanmaku('233'), 2050);
-        // setInterval(()=>this.sendDanmaku('233'), 3400);
+        window._danmaku = danmaku;
     };
 
     sendDanmaku = (text) => {
@@ -90,8 +88,12 @@ class AudioPlayer extends React.Component {
             return;
         }
 
+        this.setState({input_value : ''});
+
         //发送给Server
         if (window._ws) {
+            let seconds = parseInt(this.refs.audio_player.currentTime);
+            text = `${text}|${seconds}`;
             console.log('Sent: ' + text);
             window._ws.send(text);
         } else {
@@ -100,7 +102,6 @@ class AudioPlayer extends React.Component {
     };
 
     createDanmaku = (text) => {
-
         // 初始化 API 中的 comments 选项即为下述 comment 对象的数组。
         let comment = {
             text: text,
@@ -115,7 +116,7 @@ class AudioPlayer extends React.Component {
 
             // 弹幕显示的时间，单位为秒。
             // 在使用视频或音频模式时，如果未设置，会默认为音视频的当前时间；实时模式不需要设置。
-            // time: 233.3,
+            // time: current_time,
 
             // 在使用 DOM 引擎时，Danmaku 会为每一条弹幕创建一个 <div> 节点，
             // 以下 CSS 样式会直接设置到 div.style 上
@@ -147,29 +148,37 @@ class AudioPlayer extends React.Component {
             //     globalAlpha: 1.0
             // }
         };
-        this.state.danmaku.emit(comment);
-        this.setState({input_value : ''});
+        window._danmaku.emit(comment);
     };
 
     loadMusicInfo = (cb) => {
-        // const URL = API.SongToPlay;
-        // $.ajax({
-        //     url : URL,
-        //     type : 'GET',
-        //     headers : {
-        //         'target' : 'api',
-        //     },
-        //     contentType: 'application/json',
-        //     data : {
-        //         song_id : this.state.song_id
-        //     },
-        //     success : function(data) {
-        //                 cb(info);
-        //     }.bind(this),
-        //     error : function(xhr, textStatus) {
-        //         console.log(xhr.status + '\n' + textStatus + '\n');
-        //     }
-        // });
+        const URL = API.SongToPlay;
+        $.ajax({
+            url : URL,
+            type : 'GET',
+            headers : {
+                'target' : 'api',
+            },
+            contentType: 'application/json',
+            data : {
+                id : this.state.song_id
+            },
+            success : function(data) {
+                UserPageInfoGetter.getUserInfo(data.producer_id, (info) => {
+                    Object.assign(data, {
+                        audio_date: typeof data.audio_date === 'number' ? new Date(data.audio_date).toLocaleString() : data.audio_date,
+                        producer_name: info.username,
+                        producer_img_avator: info.avator_url,
+                        producer_description: `MusicRadio第${data.producer_id}位用户`,
+                        producer_follows: info.friends_num
+                    });
+                    cb(data);
+                });
+            },
+            error : function(xhr, textStatus) {
+                console.log(xhr.status + '\n' + textStatus + '\n');
+            }
+        });
 
         let info = {
             audio_title : '✿神的随波逐流✿笑容元气通通有，四舍五入一米九~',
@@ -183,8 +192,7 @@ class AudioPlayer extends React.Component {
             producer_name : '小星星',
             producer_description : '写写代码，想想人生'
         };
-
-        cb(info);
+        // cb(info);
     };
 
     createWebSocket = () => {
@@ -209,9 +217,50 @@ class AudioPlayer extends React.Component {
         };
     };
 
+    loadHistoryDanmaku = () => {
+        const URL = API.GetHistoryDanMu;
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url : URL,
+                type : 'GET',
+                headers : {
+                    'target' : 'api',
+                },
+                contentType: 'application/json',
+                dataType: 'json',
+                data : {
+                    id : this.state.song_id,
+                },
+                success : function(data) {
+                    if(!(data instanceof Array)) reject();
+                    let comments = [];
+                    for(let danmu of data) {
+                        comments.push({
+                            text: danmu.content,
+                            time: danmu.local_time,
+                            style: {
+                                fontSize: '20px',
+                                color: '#fff',
+                                border: '1px solid #337ab7',
+                                textShadow: '-1px -1px #000, -1px 1px #000, 1px -1px #000, 1px 1px #000'
+                            }
+                        })
+                    }
+                    resolve(comments);
+                },
+                error : function(xhr, textStatus) {
+                    console.log(xhr.status + '\n' + textStatus + '\n');
+                }
+            });
+        });
+    };
+
     componentDidMount() {
-        this.createWebSocket();
-        this.setupDanmaku();
+        // this.createWebSocket();
+        this.loadHistoryDanmaku().then((comments) => {
+            this.setupDanmaku(comments);
+        });
+
         this.setState({
             audio_visualizer: new AudioVisualizer('audio-player', 'canvas')
         });
@@ -219,6 +268,10 @@ class AudioPlayer extends React.Component {
         this.loadMusicInfo((info) => {
             this.setState(info);
         });
+    }
+
+    componentWillUnmount() {
+        window._danmaku.destroy();
     }
 
     handleInputChange = (event) => {
@@ -233,13 +286,13 @@ class AudioPlayer extends React.Component {
         return (
             <div className="audio">
                 {/*<div className="audio-header">*/}
-                    {/*<img src="http://novastar.everstar.xyz/files/Avator_homula.jpg" alt="music radio" className="logo" />*/}
+                    {/*<img src="https://novastar.everstar.xyz/files/Avator_homula.jpg" alt="music radio" className="logo" />*/}
                 {/*</div>*/}
                 <div className="audio-content">
                     <div className="title-card">
                         <div className="audio-title">
                             <div className="audio-title-left">
-                                <p style={{fontSize : '18px'}}>{this.state.audio_title}</p>
+                                <p style={{fontSize : '18px', margin: '0 0 16px'}}>{this.state.audio_title}</p>
                                 <div className="audio-info">发布时间: {this.state.audio_date} &nbsp;&nbsp; 播放量: {this.state.audio_played_times}</div>
                             </div>
                             <div className="audio-title-right">
@@ -247,7 +300,7 @@ class AudioPlayer extends React.Component {
                                 <div className="producer-info">
                                     <div className="title">{this.state.producer_name}</div>
                                     <div className="description">{this.state.producer_description}</div>
-                                    <div className="fans">粉丝: {1024}</div>
+                                    <div className="fans">粉丝: {this.state.producer_follows}</div>
                                 </div>
                             </div>
                         </div>
@@ -262,7 +315,7 @@ class AudioPlayer extends React.Component {
                                    crossOrigin="anonymous"
                                    ref="audio_player"
                                    id="audio-player"
-                                //onPlaying={()=>{this.onPlayingProgress();}}
+                                   // onPlaying={()=>{this.onPlayingProgress();}}
                                    onPause={()=>{if(this.state.timer) clearTimeout(this.state.timer);}}
                                    onEnded={()=>{if(this.state.timer) clearTimeout(this.state.timer);}}
                                    preload="auto" controls>
@@ -284,10 +337,7 @@ class AudioPlayer extends React.Component {
                                           label="发送" primary={true} disabled={this.state.toLogin} />
                         </div>
                     </div>
-
-                    <CommentDisplayer toLogin={this.state.toLogin} />
-
-
+                    {this.props.match.params.song_list_id ? <CommentDisplayer {...this.props} toLogin={this.state.toLogin} /> : null}
                 </div>
             </div>
         );
