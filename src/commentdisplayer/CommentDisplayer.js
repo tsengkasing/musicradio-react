@@ -20,7 +20,7 @@ export default class CommentDisplayer extends Component {
             comment_list : [],
             input_comment : '',
 
-            song_list_id: parseInt(this.props.match.params.song_list_id)
+            song_list_id: parseInt(this.props.match.params.song_list_id, 10)
         };
     }
 
@@ -130,8 +130,8 @@ export default class CommentDisplayer extends Component {
                             <div className="comment-content">
                                 <div className="comment-border" />
                                 <div className="comment-header">
-                                    <div className="comment-header-name">{row.name}</div>&nbsp;
-                                    <div className="comment-header-level">lv {row.level}</div>
+                                    <div className="comment-header-name">{row.user}</div>&nbsp;
+                                    <div className="comment-header-level">lv {row.rank}</div>
                                 </div>
                                 <div className="comment-text">
                                     {row.content}

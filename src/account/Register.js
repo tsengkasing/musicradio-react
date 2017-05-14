@@ -110,7 +110,7 @@ class Register extends React.Component {
     };
 
     checkEmailValidation = (event) => {
-        if(!(/^[a-zA-Z0-9_\.]+@[a-zA-Z0-9-]+[\.a-zA-Z]+$/.test(event.target.value)))
+        if(!(/^[a-zA-Z0-9_.]+@[a-zA-Z0-9-]+[.a-zA-Z]+$/.test(event.target.value)))
             this.setState({
                 error_email: 'Email is invalid'
             })

@@ -9,6 +9,7 @@
 }
 
 .background {
+    background-color: black;
     background-size: cover;
     /*padding: 32px;*/
     height: 100%;

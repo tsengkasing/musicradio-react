@@ -74,6 +74,7 @@ class Home extends React.Component {
                 path = `/user/${target}`;break;
             case 3:
                 path = `/audio/${target}`;break;
+            default:break;
         }
         this.setState({
             redirect: path

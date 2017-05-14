@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
+// import TextField from 'material-ui/TextField';
 import Chip from 'material-ui/Chip';
 import RaisedButton from 'material-ui/RaisedButton';
 import SelectField from 'material-ui/SelectField';
@@ -88,10 +88,10 @@ class SongUpload extends React.Component {
         const xhr = form.data('jqxhr');
 
         xhr.done((data) => {
-            if(data && data.result)
-                console.log('create list \nname :' + this.state.song_list_name + '\ndescription : ' + this.state.description );
-            this.handleClose();
-            this.props.success();
+            if(data && data.result) {
+                this.handleClose();
+                this.props.success();
+            }
         });
 
     };
@@ -123,9 +123,10 @@ class SongUpload extends React.Component {
 
     checkValidation = () => {
         let flag = false;
-        let error_song_name = null, error_song_artists = null, error_language = null;
+        // let error_song_name = null, error_song_artists = null;
+        let error_language = null;
         if(this.state.file_name === '') {
-            error_song_name = '必须选择上传文件';
+            // error_song_name = '必须选择上传文件';
             flag = true;
         }
         // if(this.state.song_name === '') {

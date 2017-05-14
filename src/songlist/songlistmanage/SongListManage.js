@@ -45,8 +45,7 @@ class SongListManage extends React.Component {
         if(info) {
             list = info.own_song_list_ids;
         }
-        console.log(list);
-        return list && list.includes(parseInt(this.props.match.params.id));
+        return list && list.includes(parseInt(this.props.match.params.id, 10));
     };
 
     loadSongs = () => {
@@ -64,7 +63,6 @@ class SongListManage extends React.Component {
             this.setState({
                 song_list_info: info
             });
-            console.log(info);
         });
 
         this.loadSongs();
@@ -76,7 +74,6 @@ class SongListManage extends React.Component {
 
     handleSelectSongs = (selectedRows) => {
         window.__songselected = selectedRows;
-        console.log(selectedRows);
     };
 
     handleRemoveSong = () => {
@@ -91,7 +88,7 @@ class SongListManage extends React.Component {
         }else {
             let tasks = [];
             for(let index of window.__songselected) {
-                tasks.push(SongListInfoGetter.removeSong(parseInt(this.state.song_list_id), this.state.songs[index].song_id));
+                tasks.push(SongListInfoGetter.removeSong(parseInt(this.state.song_list_id, 10), this.state.songs[index].song_id));
             }
             Promise.all(tasks).then(() => {
                 this.refs.dialog.setContent('操作成功', '选中的歌曲都删掉啦');
@@ -102,7 +99,7 @@ class SongListManage extends React.Component {
 
     handleRedirect = (song_id) => {
         this.setState({
-            redirect: `/audio/${song_id}`
+            redirect: `/audio/${this.state.song_list_id}/${song_id}`
         });
     };
 

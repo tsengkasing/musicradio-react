@@ -55,17 +55,14 @@ class AudioPlayer extends React.Component {
             toLogin: toLogin,
             ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${user_id}`
         };
-
-        console.log(this.props.match.params.song_list_id);
     }
 
     onPlayingProgress = () => {
-        let value = this.refs.audio_player.currentTime;
-        console.log(value);
-        let timer = setTimeout(this.onPlayingProgress, 1000);
-        this.setState({
-            timer : timer
-        });
+        // let value = this.refs.audio_player.currentTime;
+        // let timer = setTimeout(this.onPlayingProgress, 1000);
+        // this.setState({
+        //     timer : timer
+        // });
     };
 
     setupDanmaku = (comments) => {
@@ -92,9 +89,9 @@ class AudioPlayer extends React.Component {
 
         //发送给Server
         if (window._ws) {
-            let seconds = parseInt(this.refs.audio_player.currentTime);
+            let seconds = parseInt(this.refs.audio_player.currentTime, 10);
             text = `${text}|${seconds}`;
-            console.log('Sent: ' + text);
+            // console.log('Sent: ' + text);
             window._ws.send(text);
         } else {
             alert('connection not established, please connect.');
@@ -179,20 +176,6 @@ class AudioPlayer extends React.Component {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }
         });
-
-        let info = {
-            audio_title : '✿神的随波逐流✿笑容元气通通有，四舍五入一米九~',
-            audio_date : '2017-03-21 00:20',
-            audio_played_times : '2.33万',
-
-            audio_src: '//opbbo3bxc.bkt.clouddn.com/Taylor%20Swift%20-%20Shake%20It%20Off.mp3',
-
-            //制作者信息
-            producer_img_avator : 'http://img.everstar.xyz/everstar.jpg',
-            producer_name : '小星星',
-            producer_description : '写写代码，想想人生'
-        };
-        // cb(info);
     };
 
     createWebSocket = () => {
@@ -205,15 +188,14 @@ class AudioPlayer extends React.Component {
         // }
 
         window._ws.onopen = () => {
-            console.log('Info: connection opened.');
+            // console.log('Info: connection opened.');
         };
         window._ws.onmessage = (event) => {
-            console.log('Received: ' + event.data);
+            // console.log('Received: ' + event.data);
             this.createDanmaku(event.data);
         };
         window._ws.onclose = (event) => {
-            console.log('Info: connection closed.');
-            console.log(JSON.stringify(event));
+            // console.log('Info: connection closed.');
         };
     };
 
@@ -256,9 +238,10 @@ class AudioPlayer extends React.Component {
     };
 
     componentDidMount() {
-        // this.createWebSocket();
+        this.createWebSocket();
         this.loadHistoryDanmaku().then((comments) => {
             this.setupDanmaku(comments);
+            console.log(comments);
         });
 
         this.setState({
@@ -272,6 +255,7 @@ class AudioPlayer extends React.Component {
 
     componentWillUnmount() {
         window._danmaku.destroy();
+        window._ws.close();
     }
 
     handleInputChange = (event) => {

@@ -112,7 +112,6 @@ class UserPage extends React.Component {
             },
             data : JSON.stringify(data),
             success : function(data) {
-                console.log(data);
                 if(data.result) {
                     let album = this.state.albums.slice();
                     album[index].liked = true;

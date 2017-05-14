@@ -90,7 +90,6 @@ export default class AudioVisualizer{
             ctx.clearRect(0, 0, cwidth, cheight);
             for (let i = 0; i < meterNum; i++) {
                 let value = array[i * step];
-                // console.log(JSON.stringify(array.slice(0, 50)));
                 if (capYPositionArray.length < Math.round(meterNum)) {
                     capYPositionArray.push(value);
                 }

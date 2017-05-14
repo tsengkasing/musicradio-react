@@ -36,7 +36,6 @@ class SongListCreateDialog extends React.Component {
             description: this.state.description,
         };
         SongListInfoGetter.createSongList(songlist_info, () => {
-            console.log('createlist \nname :' + this.state.songlist_name + '\ndescription : ' + this.state.description );
             this.handleClose();
             this.props.success();
         });

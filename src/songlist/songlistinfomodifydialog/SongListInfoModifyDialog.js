@@ -64,10 +64,10 @@ class SongListInfoModifyDialog extends React.Component {
         const xhr = form.data('jqxhr');
 
         xhr.done((data) => {
-            if(data && data.result)
-                console.log('create list \nname :' + this.state.song_list_name + '\ndescription : ' + this.state.description );
-            this.handleClose();
-            this.props.success();
+            if(data && data.result) {
+                this.handleClose();
+                this.props.success();
+            }
         });
 
         // this.refs.submit.click();
