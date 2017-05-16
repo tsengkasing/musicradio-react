@@ -64,9 +64,9 @@ class SongList extends React.Component {
                 <div className="sub-header">
                     <span>所有歌单</span>
                 </div>
-                <div style={{textAlign: 'center', margin: 16}}>
+                <div style={{textAlign: 'center', margin: 32}}>
                 {this.state.wait ? <CircularProgress size={60} thickness={5} /> :
-                <FlatButton label="添加歌单" primary={true} fullWidth={true} labelStyle={{fontSize: 16}} onTouchTap={this.handleCreateSongList} />}
+                <FlatButton label="添加歌单" primary={true} fullWidth={true} labelStyle={{fontSize: 20}} onTouchTap={this.handleCreateSongList} />}
                 </div>
                 <div className="song-list">
                     {this.state.song_list.map((item, index) => (

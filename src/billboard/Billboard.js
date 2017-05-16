@@ -5,6 +5,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import IconButton from 'material-ui/IconButton';
+import CircularProgress from 'material-ui/CircularProgress';
 import ActionGrade from 'material-ui/svg-icons/action/grade';
 import $ from 'jquery';
 import API from '../API';
@@ -19,6 +20,7 @@ class Billboard extends React.Component {
         super(props);
         this.state = {
             albums: [],
+            wait: true,
             redirect: null
         }
     }
@@ -70,7 +72,10 @@ class Billboard extends React.Component {
             },
             success : function(data) {
                 if(this.refs.billboard)
-                    this.setState({albums : data})
+                    this.setState({
+                        albums : data,
+                        wait: false
+                    })
             }.bind(this),
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
@@ -101,7 +106,7 @@ class Billboard extends React.Component {
                                 <div className="billboard-item-image" style={{background: `url(${item.img_url}) no-repeat center`, backgroundSize: 'cover'}} onTouchTap={() => this.handleRedirect(item.list_id)} />
                                 <div>
                                     <div className="billboard-item-title">
-                                        <div onTouchTap={() => this.handleRedirect(item.list_id)}><span className="billboard-item-order">{index + 1}</span>&nbsp;&nbsp;{item.songlist_name}</div>
+                                        <div onClick={() => this.handleRedirect(item.list_id)}><span className="billboard-item-order">{index + 1}</span>&nbsp;&nbsp;{item.songlist_name}</div>
                                         <div style={{display: 'flex', flexFlow: 'row nowrap'}}>
                                             {item.liked ?
                                                 <div className="billboard-item-star-label"><div>Likes</div></div> :
@@ -119,6 +124,9 @@ class Billboard extends React.Component {
                             </div>
                         </Paper>
                     ))}
+                    <div style={{margin: '32px auto'}}>
+                        {this.state.wait ? <CircularProgress size={60} thickness={5} /> : null}
+                    </div>
                 </div>
                 {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
             </div>
