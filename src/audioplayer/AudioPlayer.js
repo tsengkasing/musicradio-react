@@ -2,6 +2,7 @@
  * Created by Think on 2017/5/5.
  */
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
@@ -39,6 +40,7 @@ class AudioPlayer extends React.Component {
             audio_played_times : '0',
 
             //制作者信息
+            producer_id: -1,
             producer_img_avator : 'http://img.everstar.xyz/default.jpg',
             producer_name : 'Nobody',
             producer_description : '这个up主啥也没写',
@@ -53,7 +55,9 @@ class AudioPlayer extends React.Component {
             timer : 0,
 
             toLogin: toLogin,
-            ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${user_id}`
+            ws_url: `${API.DanmakuWebSocket}/danmu?id=${this.props.match.params.id}&user=${user_id}`,
+
+            redirect: null
         };
     }
 
@@ -241,7 +245,6 @@ class AudioPlayer extends React.Component {
         this.createWebSocket();
         this.loadHistoryDanmaku().then((comments) => {
             this.setupDanmaku(comments);
-            console.log(comments);
         });
 
         this.setState({
@@ -257,6 +260,11 @@ class AudioPlayer extends React.Component {
         window._danmaku.destroy();
         window._ws.close();
     }
+
+    redirectToUserPage = () => {
+        if(this.state.toLogin) {alert('登录之后才能查看up主信息~~~');}
+        else this.setState({redirect: `/user/${this.state.producer_id}`});
+    };
 
     handleInputChange = (event) => {
         this.setState({
@@ -280,9 +288,11 @@ class AudioPlayer extends React.Component {
                                 <div className="audio-info">发布时间: {this.state.audio_date} &nbsp;&nbsp; 播放量: {this.state.audio_played_times}</div>
                             </div>
                             <div className="audio-title-right">
-                                <img className="producer-avator" alt="Avator missing!" src={this.state.producer_img_avator}/>
+                                <img className="producer-avator" alt="Avator missing!" src={this.state.producer_img_avator}
+                                     onClick={this.redirectToUserPage}/>
                                 <div className="producer-info">
-                                    <div className="title">{this.state.producer_name}</div>
+                                    <div className="title" onClick={this.redirectToUserPage}>
+                                        {this.state.producer_name}</div>
                                     <div className="description">{this.state.producer_description}</div>
                                     <div className="fans">粉丝: {this.state.producer_follows}</div>
                                 </div>
@@ -321,8 +331,9 @@ class AudioPlayer extends React.Component {
                                           label="发送" primary={true} disabled={this.state.toLogin} />
                         </div>
                     </div>
-                    {this.props.match.params.song_list_id ? <CommentDisplayer {...this.props} toLogin={this.state.toLogin} /> : null}
+                    {this.props.match.params.song_list_id && !this.state.toLogin ? <CommentDisplayer {...this.props} toLogin={this.state.toLogin} /> : null}
                 </div>
+                {this.state.redirect ? <Redirect to={this.state.redirect}/> : null}
             </div>
         );
     }

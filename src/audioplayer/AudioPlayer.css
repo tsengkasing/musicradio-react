@@ -70,6 +70,7 @@
     height:64px;
     border-radius: 50%;
     margin: 32px;
+    cursor: pointer;
 }
 
 .producer-info {
@@ -83,6 +84,7 @@
     color: #00a1d6;
     margin-bottom: 4px;
     font-size: 14px;
+    cursor: pointer;
 }
 
 .producer-info .description {

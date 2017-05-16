@@ -97,19 +97,17 @@ class SignIn extends React.Component {
                 data : {
                     id : this.state.username
                 },
-                success : function(data, textStatus, jqXHR) {
+                success : function(data) {
                     if(data.result)
                         this.setState({error_username: null});
                     else
                         this.setState({error_username: 'Username not existed'});
                 }.bind(this),
                 error : function(xhr, textStatus) {
-                    if(xhr.status === 500) {
-                        this.refs.dialog.setContent('Internal Server Error', 'Please wait a minute.');
-                        this.refs.dialog.handleOpen(false);
-                    }
+                    this.refs.dialog.setContent(xhr.statusText, 'Please wait a minute.');
+                    this.refs.dialog.handleOpen(false);
                     console.log(xhr.status + '\n' + textStatus + '\n');
-                }
+                }.bind(this)
             });
         }
     };

@@ -50,7 +50,7 @@ class AvatarUpload extends React.Component {
         return (
             <div>
                 <Dialog
-                    title="Upload a Avator"
+                    title="更改头像"
                     actions={actions}
                     modal={false}
                     open={this.state.open}

@@ -24,8 +24,9 @@ class Header extends React.Component {
             },
             success : function() {
                 Auth.clearUserInfo();
-                window.location.reload();
-            },
+                this.props.success();
+                window.location.pathname = '/sign';
+            }.bind(this),
             error : function(xhr, textStatus) {
                 console.log(xhr.status + '\n' + textStatus + '\n');
             }

@@ -74,8 +74,10 @@ class Register extends React.Component {
                 }
             }.bind(this),
             error : function(xhr, textStatus) {
+                this.refs.dialog.setContent(xhr.statusText, 'Please wait a minute.');
+                this.refs.dialog.handleOpen(false);
                 console.log(xhr.status + '\n' + textStatus + '\n');
-            }
+            }.bind(this)
         });
     };
 
@@ -103,8 +105,10 @@ class Register extends React.Component {
                         this.setState({error_username: null});
                 }.bind(this),
                 error : function(xhr, textStatus) {
+                    this.refs.dialog.setContent(xhr.statusText, 'Please wait a minute.');
+                    this.refs.dialog.handleOpen(false);
                     console.log(xhr.status + '\n' + textStatus + '\n');
-                }
+                }.bind(this)
             });
         }
     };

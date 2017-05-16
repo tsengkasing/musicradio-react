@@ -62,7 +62,7 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <div className="layout">
-                    <Header info={{name: this.state.name, toLogin: this.state.toLogin}} />
+                    <Header info={{name: this.state.name, toLogin: this.state.toLogin}} success={this.handleRefreshStatus} />
                     <MuiThemeProvider>
                         <div className="content">
                             <Switch>

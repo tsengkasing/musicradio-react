@@ -20,6 +20,13 @@ class UserPage extends React.Component {
 
     constructor(props) {
         super(props);
+
+        let redirect = null;
+        let info = Auth.getUserInfo();
+        if(info && info.id && info.id.toString() === this.props.match.params.id) {
+            redirect = '/u/home';
+        }
+
         this.state = {
             user_info: {
                 username: 'Nobody',
@@ -38,8 +45,7 @@ class UserPage extends React.Component {
             },
             albums: [],
             moments: [],
-            redirect: Auth.getUserInfo().id.toString() === this.props.match.params.id ?
-                '/u/home' : null
+            redirect: redirect
         };
     }
 
