@@ -81,7 +81,8 @@ class AudioPlayer extends React.Component {
         window._danmaku = danmaku;
     };
 
-    sendDanmaku = (text) => {
+    sendDanmaku = () => {
+        let text = this.state.input_value;
         if(!text || text === '') {
             this.setState({
                 input_error : '弹幕不能为空喔~'
@@ -102,7 +103,7 @@ class AudioPlayer extends React.Component {
         }
     };
 
-    createDanmaku = (text) => {
+    createDanmaku = (text, current_time) => {
         // 初始化 API 中的 comments 选项即为下述 comment 对象的数组。
         let comment = {
             text: text,
@@ -117,7 +118,7 @@ class AudioPlayer extends React.Component {
 
             // 弹幕显示的时间，单位为秒。
             // 在使用视频或音频模式时，如果未设置，会默认为音视频的当前时间；实时模式不需要设置。
-            // time: current_time,
+            time: current_time,
 
             // 在使用 DOM 引擎时，Danmaku 会为每一条弹幕创建一个 <div> 节点，
             // 以下 CSS 样式会直接设置到 div.style 上
@@ -316,7 +317,7 @@ class AudioPlayer extends React.Component {
                                 贵浏览器不支持Audio标签，垃圾滚粗
                             </audio>
                         </div>
-                        <div className="create-danmaku">
+                        <div className="create-danmaku" onKeyUp={(event) => {if(event.keyCode === 13 && !this.state.toLogin) this.sendDanmaku()}}>
                             <TextField
                                 className="text-field"
                                 hintText={this.state.toLogin ? "登录之后才能发送弹幕喔~" : "发送弹幕~(๑•̀ㅁ•́๑)✧"}
@@ -327,7 +328,7 @@ class AudioPlayer extends React.Component {
                                 disabled={this.state.toLogin}
                             />
                             <RaisedButton className="button"
-                                          onTouchTap={()=>{this.sendDanmaku(this.state.input_value);}}
+                                          onTouchTap={()=>this.sendDanmaku()}
                                           label="发送" primary={true} disabled={this.state.toLogin} />
                         </div>
                     </div>

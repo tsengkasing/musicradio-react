@@ -103,7 +103,7 @@ export default class CommentDisplayer extends Component {
     render() {
         return (
             <div className="comment-list-border">
-                <div className="create-comment">
+                <div className="create-comment" onKeyUp={(event) => {if(event.keyCode === 13 && !this.props.toLogin) this.sendComment()}}>
                     <img className="avator" alt="missing" src={this.state.user_img_avator}/>
                     <textarea
                         id="input_comment"
