@@ -6,6 +6,7 @@ import FlatButton from 'material-ui/FlatButton';
 import TextField from 'material-ui/TextField';
 import Dialog from 'material-ui/Dialog';
 import SongListInfoGetter from '../SongListInfoGetter';
+import HomeInfoGetter from '../../home/HomeInfoGetter';
 
 class SongListCreateDialog extends React.Component {
     state = {
@@ -38,6 +39,7 @@ class SongListCreateDialog extends React.Component {
         SongListInfoGetter.createSongList(songlist_info, () => {
             this.handleClose();
             this.props.success();
+            HomeInfoGetter.storeUserOwnSongListId();
         });
 
     };

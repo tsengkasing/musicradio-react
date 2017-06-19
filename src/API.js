@@ -9,7 +9,8 @@ class API {
 
     static title = 'Music Radio';
 
-    static DanmakuWebSocket = 'ws://60.205.217.210:8080/MusicBubble/';
+    // static DanmakuWebSocket = 'ws://60.205.217.210:8080/MusicBubble/';
+    static DanmakuWebSocket = 'ws://happyfarmer-oray.vicp.io:8088/';
 
     //账户
     static SignIn = URL + '/signin';//success

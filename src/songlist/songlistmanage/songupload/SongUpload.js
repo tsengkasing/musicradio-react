@@ -88,7 +88,7 @@ class SongUpload extends React.Component {
         const xhr = form.data('jqxhr');
 
         xhr.done((data) => {
-            if(data && data.result) {
+            if(data && data.song_id) {
                 this.handleClose();
                 this.props.success();
             }

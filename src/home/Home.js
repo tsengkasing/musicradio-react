@@ -47,7 +47,7 @@ class Home extends React.Component {
 
         HomeInfoGetter.getRecommendSongs((detail_list) => {
             if(this.refs.home)
-                this.setState({recommend_song_list : detail_list});
+                this.setState({recommend_song_list : detail_list.filter(song=>typeof song === 'object' ? song : null)});
         });
 
         HomeInfoGetter.getRecommendUsers((detail_list) => {
@@ -64,21 +64,21 @@ class Home extends React.Component {
     }
 
     handleRedirect = (type, target) => {
-        let path;
+        let path = null;
         switch(type) {
             case 0:
-                path = '/songlist';break;
+                path = '/u/songlist';break;
             case 1:
                 path = '/u/follow';break;
             case 2:
                 path = `/user/${target}`;break;
             case 3:
                 path = `/audio/${target}`;break;
+            case 4:
+                path = '/u/likedsonglist';break;
             default:break;
         }
-        this.setState({
-            redirect: path
-        });
+        this.setState({redirect: path});
     };
 
     render () {
@@ -104,15 +104,15 @@ class Home extends React.Component {
                                     </div>
                                 </div>
                                 <div className="home-private-info-count-border">
-                                    <div className="home-private-info-count" onTouchTap={() => this.handleRedirect(0)}>
+                                    <div className="home-private-info-count" onClick={() => this.handleRedirect(0)}>
                                         <div className="home-private-info-count-number">{this.state.user_info.ctr_songlist}</div>
                                         <div>创建歌单数</div>
                                     </div>
-                                    <div className="home-private-info-count" style={{cursor: 'default'}}>
+                                    <div className="home-private-info-count" onClick={() => this.handleRedirect(4)}>
                                         <div className="home-private-info-count-number">{this.state.user_info.liked_songlist}</div>
                                         <div>喜爱歌单数</div>
                                     </div>
-                                    <div className="home-private-info-count" onTouchTap={() => this.handleRedirect(1)}>
+                                    <div className="home-private-info-count" onClick={() => this.handleRedirect(1)}>
                                         <div className="home-private-info-count-number">{this.state.user_info.friends_num}</div>
                                         <div>关注好友数</div>
                                     </div>
@@ -127,7 +127,7 @@ class Home extends React.Component {
                         </div>
                         <div className="home-private-recommend" style={{margin: '0 8px'}}>
                             {this.state.recommend_user_list.map((user, index)=>(
-                                <div className="recommend-user-item" key={index} onTouchTap={() => this.handleRedirect(2, user.id)}>
+                                <div className="recommend-user-item" key={index} onClick={() => this.handleRedirect(2, user.id)}>
                                     <img className="home-info-avatar" src={user.avator_url} alt="头像" />
                                     <div className="recommend-user-item-info">
                                         <div>{user.username}</div><br/>
@@ -158,9 +158,9 @@ class Home extends React.Component {
                                     <IconButton className="recommend-list-item-button-play" tooltip="Play" touch={true} tooltipPosition="top-left" onTouchTap={() => this.handleRedirect(3, item.song_id)} style={{padding: 0, height: 'auto'}}>
                                         <AvPlayCircleOutline/>
                                     </IconButton>
-                                    <span><span>{index + 1}. </span>{item.audio_title}</span>
+                                    <span><span>{index + 1}. </span>{item.song_name}</span>
                                 </div>
-                                <div>{item.artists}</div>
+                                <div>{item.song_artists}</div>
                             </div>
                         ))}
                     </div>

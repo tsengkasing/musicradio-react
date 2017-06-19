@@ -24,6 +24,8 @@ class HomeInfoGetter {
                     resolve(data);
                 },
                 error : function(xhr, textStatus) {
+                    console.log('[ERROR] Parse Song Info Error');
+                    resolve(null);
                     console.log(xhr.status + '\n' + textStatus + '\n');
                 }
             });
@@ -50,6 +52,8 @@ class HomeInfoGetter {
                 }
                 Promise.all(promise_detail_list).then((detail_list) => {
                     cb(detail_list);
+                }).catch(()=>{
+                    console.error('[ERROR]Song Info Lost.');
                 });
             },
             error : function(xhr, textStatus) {

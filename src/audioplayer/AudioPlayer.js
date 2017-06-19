@@ -34,7 +34,7 @@ class AudioPlayer extends React.Component {
         this.state = {
             song_id: this.props.match.params.id,
             //音频信息
-            audio_title : '',
+            song_name : '',
             audio_date : '',
 
             audio_played_times : '0',
@@ -193,14 +193,20 @@ class AudioPlayer extends React.Component {
         // }
 
         window._ws.onopen = () => {
-            // console.log('Info: connection opened.');
+            console.log('Info: connection opened.');
         };
         window._ws.onmessage = (event) => {
-            // console.log('Received: ' + event.data);
-            this.createDanmaku(event.data);
+            console.log('Received: ' + event.data);
+            let comment = event.data, local_time = 0;
+            let index = comment.indexOf('|');
+            if(index !== -1) {
+                local_time = parseInt(comment.slice(index + 1), 10);
+                comment = comment.slice(0, index);
+            }
+            this.createDanmaku(comment, local_time);
         };
         window._ws.onclose = (event) => {
-            // console.log('Info: connection closed.');
+            console.log('Info: connection closed.');
         };
     };
 
@@ -223,7 +229,7 @@ class AudioPlayer extends React.Component {
                     let comments = [];
                     for(let danmu of data) {
                         comments.push({
-                            text: danmu.content,
+                            text: danmu.content.slice(0,danmu.content.indexOf('|')),
                             time: danmu.local_time,
                             style: {
                                 fontSize: '20px',
@@ -285,7 +291,7 @@ class AudioPlayer extends React.Component {
                     <div className="title-card">
                         <div className="audio-title">
                             <div className="audio-title-left">
-                                <p style={{fontSize : '18px', margin: '0 0 16px'}}>{this.state.audio_title}</p>
+                                <p style={{fontSize : '18px', margin: '0 0 16px'}}>{this.state.song_name}</p>
                                 <div className="audio-info">发布时间: {this.state.audio_date} &nbsp;&nbsp; 播放量: {this.state.audio_played_times}</div>
                             </div>
                             <div className="audio-title-right">

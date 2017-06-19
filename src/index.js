@@ -14,6 +14,7 @@ import SongList from './songlist/SongList';
 import UserPage from './userpage/UserPage';
 import SongListManage from './songlist/songlistmanage/SongListManage';
 import Billboard from './billboard/Billboard';
+import LikedSongList from './billboard/LikedSongList';
 import AudioPlayer from './audioplayer/AudioPlayer';
 
 import './index.css';
@@ -77,6 +78,7 @@ class App extends React.Component {
                                 <PrivateRoute exact path="/" component={Home}/>
                                 <PrivateRoute path="/u/home" component={Home}/>
                                 <PrivateRoute path="/u/follow" component={Follow}/>
+                                <PrivateRoute path="/u/likedsonglist" component={LikedSongList}/>
                                 <PrivateRoute exact path="/u/songlist" component={SongList}/>
                                 <Route component={NotFound}/>
                             </Switch>
